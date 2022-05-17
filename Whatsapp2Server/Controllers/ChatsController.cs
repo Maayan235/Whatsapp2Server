@@ -10,88 +10,85 @@ using Whatsapp2Server.Models;
 
 namespace Whatsapp2Server.Controllers
 {
-    public class UsersController : Controller
+    public class ChatsController : Controller
     {
         private readonly Whatsapp2ServerContext _context;
 
-
-        public UsersController(Whatsapp2ServerContext context)
+        public ChatsController(Whatsapp2ServerContext context)
         {
             _context = context;
         }
 
-        // GET: Users
+        // GET: Chats
         public async Task<IActionResult> Index()
         {
-              return _context.User != null ? 
-                          View(await _context.User.ToListAsync()) :
-                          Problem("Entity set 'Whatsapp2ServerContext.User'  is null.");
+              return View(await _context.Chat.ToListAsync());
         }
 
-        // GET: Users/Details/5
+        // GET: Chats/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.User == null)
+            if (id == null || _context.Chat == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.User
+            var chat = await _context.Chat
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (user == null)
+            if (chat == null)
             {
                 return NotFound();
             }
 
-            return View(user);
+            return View(chat);
         }
 
-        // GET: Users/Create
+        // GET: Chats/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Users/Create
+        // POST: Chats/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,userName,password,nickName,profilePicSrc")] User user)
+        public async Task<IActionResult> Create([Bind("Id")] Chat chat)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(user);
+                _context.Add(chat);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(user);
+            return View(chat);
         }
 
-        // GET: Users/Edit/5
+        // GET: Chats/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.User == null)
+            if (id == null || _context.Chat == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.User.FindAsync(id);
-            if (user == null)
+            var chat = await _context.Chat.FindAsync(id);
+            if (chat == null)
             {
                 return NotFound();
             }
-            return View(user);
+            return View(chat);
         }
 
-        // POST: Users/Edit/5
+        // POST: Chats/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,userName,password,nickName,profilePicSrc")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id")] Chat chat)
         {
-            if (id != user.Id)
+            if (id != chat.Id)
             {
                 return NotFound();
             }
@@ -100,12 +97,12 @@ namespace Whatsapp2Server.Controllers
             {
                 try
                 {
-                    _context.Update(user);
+                    _context.Update(chat);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserExists(user.Id))
+                    if (!ChatExists(chat.Id))
                     {
                         return NotFound();
                     }
@@ -116,49 +113,49 @@ namespace Whatsapp2Server.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(user);
+            return View(chat);
         }
 
-        // GET: Users/Delete/5
+        // GET: Chats/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.User == null)
+            if (id == null || _context.Chat == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.User
+            var chat = await _context.Chat
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (user == null)
+            if (chat == null)
             {
                 return NotFound();
             }
 
-            return View(user);
+            return View(chat);
         }
 
-        // POST: Users/Delete/5
+        // POST: Chats/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.User == null)
+            if (_context.Chat == null)
             {
-                return Problem("Entity set 'Whatsapp2ServerContext.User'  is null.");
+                return Problem("Entity set 'Whatsapp2ServerContext.Chat'  is null.");
             }
-            var user = await _context.User.FindAsync(id);
-            if (user != null)
+            var chat = await _context.Chat.FindAsync(id);
+            if (chat != null)
             {
-                _context.User.Remove(user);
+                _context.Chat.Remove(chat);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UserExists(int id)
+        private bool ChatExists(int id)
         {
-          return (_context.User?.Any(e => e.Id == id)).GetValueOrDefault();
+          return _context.Chat.Any(e => e.Id == id);
         }
     }
 }

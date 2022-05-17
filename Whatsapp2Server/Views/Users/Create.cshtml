@@ -1,4 +1,4 @@
-﻿@model Whatsapp.Models.User
+﻿@model Whatsapp2Server.Models.User
 
 @{
     ViewData["Title"] = "Create";
@@ -10,9 +10,8 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Register">
+        <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
             <div class="form-group">
                 <label asp-for="userName" class="control-label"></label>
                 <input asp-for="userName" class="form-control" />
@@ -28,27 +27,20 @@
                 <input asp-for="nickName" class="form-control" />
                 <span asp-validation-for="nickName" class="text-danger"></span>
             </div>
-            
             <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
+                <label asp-for="profilePicSrc" class="control-label"></label>
+                <input asp-for="profilePicSrc" class="form-control" />
+                <span asp-validation-for="profilePicSrc" class="text-danger"></span>
             </div>
-
-
             <div class="form-group">
-                <input type="submit" value="Register" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
-        @if (ViewBag.Error != null)
-        {
-        <div class = "text-danger">@ViewBag.Error</div>
-        }
     </div>
 </div>
 
 <div>
-   Already registered? <a asp-action="Login">Click here</a> to login
+    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

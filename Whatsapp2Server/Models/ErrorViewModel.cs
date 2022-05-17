@@ -1,4 +1,4 @@
-namespace Whatsapp2Server.Models
+﻿namespace Whatsapp2Server.Models
 {
     public class ErrorViewModel
     {
