@@ -4,8 +4,10 @@
     {
         public int Id { get; set; }
 
-        public ICollection<User> contacts { get; set; }
+        public HashSet<User> contacts { get; set; }
 
         public ICollection<Message> messages { get; set; }
+
+        public Message LastMessage { get; set; }
     }
 }

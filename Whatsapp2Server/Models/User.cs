@@ -13,6 +13,8 @@ namespace Whatsapp2Server.Models
         public string password { get; set; }
         
         public string nickName { get; set; }
+
+        public string serverName { get; set; }
         public ICollection<User> contacts { get; set; }
         public ICollection<Chat> chats { get; set; }
         public string profilePicSrc { get; set; }

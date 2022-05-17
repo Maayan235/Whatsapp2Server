@@ -7,34 +7,34 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Whatsapp2Server.Data;
 using Whatsapp2Server.Models;
+using Whatsapp2Server.services;
 
 namespace Whatsapp2Server.Controllers
 {
     public class ChatsController : Controller
     {
-        private readonly Whatsapp2ServerContext _context;
+        private readonly IChat _service;
 
         public ChatsController(Whatsapp2ServerContext context)
         {
-            _context = context;
+            _service = new ChatService();
         }
 
         // GET: Chats
         public async Task<IActionResult> Index()
         {
-              return View(await _context.Chat.ToListAsync());
+              return View( _service.getAll());
         }
 
         // GET: Chats/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
-            if (id == null || _context.Chat == null)
+            if (id == null || _service.getAll() == null)
             {
                 return NotFound();
             }
 
-            var chat = await _context.Chat
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var chat = _service.getAll().FirstOrDefault(m => m.Id == id);
             if (chat == null)
             {
                 return NotFound();
@@ -54,33 +54,32 @@ namespace Whatsapp2Server.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id")] Chat chat)
+        public IActionResult Create([Bind("Id")] Chat chat)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(chat);
-                await _context.SaveChangesAsync();
+                _service.Add(chat);
                 return RedirectToAction(nameof(Index));
             }
             return View(chat);
         }
 
         // GET: Chats/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        /*public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Chat == null)
+            if (id == null || _service.getAll() == null)
             {
                 return NotFound();
             }
 
-            var chat = await _context.Chat.FindAsync(id);
+            var chat = _service.getAll().FirstOrDefault(c=>c.Id == id);
             if (chat == null)
             {
                 return NotFound();
             }
             return View(chat);
         }
-
+        
         // POST: Chats/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -114,10 +113,10 @@ namespace Whatsapp2Server.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(chat);
-        }
+        }*/
 
         // GET: Chats/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+       /* public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Chat == null)
             {
@@ -156,6 +155,6 @@ namespace Whatsapp2Server.Controllers
         private bool ChatExists(int id)
         {
           return _context.Chat.Any(e => e.Id == id);
-        }
+        }*/
     }
 }
