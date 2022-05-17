@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using Whatsapp2Server.Models;
 
 namespace Whatsapp2Server.Controllers
 {
+    [Authorize]
     public class ChatsController : Controller
     {
         private readonly Whatsapp2ServerContext _context;
@@ -20,12 +22,23 @@ namespace Whatsapp2Server.Controllers
         }
 
         // GET: Chats
+        [Authorize]
         public async Task<IActionResult> Index()
-        {
+        {       
+              /*if (HttpContext.Session.GetString("username") == null)
+                return RedirectToAction("Login", "Users");*/
+
               return View(await _context.Chat.ToListAsync());
         }
 
+        // GET: Chats
+        public async Task Logout()
+        {
+            HttpContext.Session.Clear();
+        }
+
         // GET: Chats/Details/5
+        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Chat == null)
@@ -44,6 +57,7 @@ namespace Whatsapp2Server.Controllers
         }
 
         // GET: Chats/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -54,6 +68,7 @@ namespace Whatsapp2Server.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("Id")] Chat chat)
         {
             if (ModelState.IsValid)
@@ -66,6 +81,7 @@ namespace Whatsapp2Server.Controllers
         }
 
         // GET: Chats/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Chat == null)
@@ -86,6 +102,7 @@ namespace Whatsapp2Server.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Id")] Chat chat)
         {
             if (id != chat.Id)
@@ -117,6 +134,7 @@ namespace Whatsapp2Server.Controllers
         }
 
         // GET: Chats/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Chat == null)
@@ -137,6 +155,7 @@ namespace Whatsapp2Server.Controllers
         // POST: Chats/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Chat == null)
