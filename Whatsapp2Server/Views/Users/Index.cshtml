@@ -13,16 +13,16 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.userName)
+                @Html.DisplayNameFor(model => model.UserName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.password)
+                @Html.DisplayNameFor(model => model.Password)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.nickName)
+                @Html.DisplayNameFor(model => model.NickName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.profilePicSrc)
+                @Html.DisplayNameFor(model => model.ProfilePicSrc)
             </th>
             <th></th>
         </tr>
@@ -31,16 +31,16 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.userName)
+                @Html.DisplayFor(modelItem => item.UserName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.password)
+                @Html.DisplayFor(modelItem => item.Password)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.nickName)
+                @Html.DisplayFor(modelItem => item.NickName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.profilePicSrc)
+                @Html.DisplayFor(modelItem => item.ProfilePicSrc)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
