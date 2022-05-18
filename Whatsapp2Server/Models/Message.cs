@@ -7,7 +7,7 @@
         public DateTime Date { get; set; }
         public int senderID { get; set; }
 
-        public Chat chat{ get; set; }
+        public Chat chat{ get; set; } 
     
     }
 }

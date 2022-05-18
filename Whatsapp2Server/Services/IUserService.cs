@@ -3,7 +3,7 @@
 namespace Whatsapp2Server.Services
 {
     public interface IUserService
-    {
+    { 
         public ICollection<User> GetAll();
         public User Get(int id);
 

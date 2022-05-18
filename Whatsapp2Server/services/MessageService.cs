@@ -3,7 +3,7 @@
 namespace Whatsapp2Server.services
 {
     public class MessageService : IMessageService
-    {
+    { 
         private static ICollection<Message> users = new List<Message>();
 
         public ICollection<Message> getAll()

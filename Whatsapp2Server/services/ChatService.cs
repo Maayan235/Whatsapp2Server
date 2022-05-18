@@ -1,7 +1,7 @@
 ﻿using Whatsapp2Server.Models;
 
 namespace Whatsapp2Server.services
-{
+{ 
     public class ChatService : IChat
     {
         private static ICollection<Chat> _chats;

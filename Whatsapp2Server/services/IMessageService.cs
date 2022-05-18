@@ -2,7 +2,7 @@
 
 namespace Whatsapp2Server.services
 {
-    public interface IMessageService
+    public interface IMessageService 
     {
         
         public ICollection<Message> getAll();

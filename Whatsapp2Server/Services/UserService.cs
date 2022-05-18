@@ -4,7 +4,7 @@ namespace Whatsapp2Server.Services
 {
     public class UserService : IUserService
     {
-        private static ICollection<User> users = new List<User>();
+        private static ICollection<User> users = new List<User>(); 
 
         public ICollection<User> GetAll()
         {

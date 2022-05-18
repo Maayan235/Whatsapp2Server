@@ -1,12 +1,10 @@
 ﻿@model Whatsapp2Server.Models.User
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Register";
 }
 
-<h1>Create</h1>
-
-<h4>User</h4>
+<h1>Register</h1>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -21,18 +19,18 @@
             <div class="form-group">
                 <label asp-for="Password" class="control-label"></label>
                 <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
+                <span asp-validation-for="Password" class="text-danger"></span> 
             </div>
-           <div class="form-group">
+            <div class="form-group">
                 <label asp-for="NickName" class="control-label"></label>
                 <input asp-for="NickName" class="form-control" />
                 <span asp-validation-for="NickName" class="text-danger"></span>
             </div>
             
             <div class="form-group">
-                <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
-                <span asp-validation-for="Id" class="text-danger"></span>
+                <label asp-for="ProfilePicSrc" class="control-label"></label>
+                <input asp-for="ProfilePicSrc" class="form-control" />
+                <span asp-validation-for="ProfilePicSrc" class="text-danger"></span>
             </div>
 
 
@@ -42,13 +40,13 @@
         </form>
         @if (ViewBag.Error != null)
         {
-        <div class = "text-danger">@ViewBag.Error</div>
+            <div class="text-danger">@ViewBag.Error</div>
         }
     </div>
 </div>
 
 <div>
-   Already registered? <a asp-action="Login">Click here</a> to login
+    Already registerd? Click <a asp-action="Login">here</a> to login 
 </div>
 
 @section Scripts {
