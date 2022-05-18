@@ -4,9 +4,7 @@
     ViewData["Title"] = "Login";
 }
 
-<h1>Create</h1>
-
-<h4>User</h4>
+<h1>Login</h1>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -31,13 +29,13 @@
 
         @if (ViewBag.Error != null)
         {
-        <div class = "text-danger">@ViewBag.Error</div>
+            <div class="text-danger">@ViewBag.Error</div>
         }
     </div>
 </div>
 
 <div>
-   Not registered yet? <a asp-action="Register">Click here</a> to register!
+    Don't have a user? Click <a asp-action="Register">here</a> to register 
 </div>
 
 @section Scripts {

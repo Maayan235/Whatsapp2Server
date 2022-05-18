@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -22,12 +26,14 @@ namespace Whatsapp2Server.Controllers
         }
 
         // GET: Users
+        [Authorize]
         public IActionResult Index()
         {
               return View(_service.GetAll());
         }
 
         // GET: Users/Details/5
+        [Authorize]
         public IActionResult Details(int? id)
         {
             if (id == null)
@@ -45,6 +51,7 @@ namespace Whatsapp2Server.Controllers
         }
 
         // GET: Users/Create
+        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -55,6 +62,7 @@ namespace Whatsapp2Server.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public IActionResult Create([Bind("Id,UserName,Password,NickName,ProfilePicSrc")] User user)
         {
             if (ModelState.IsValid)
@@ -66,69 +74,7 @@ namespace Whatsapp2Server.Controllers
         }
 
         // GET: Users/Edit/5
-
-        public IActionResult Register()
-        {
-            return View();
-        }
-
-        // POST: Users/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Register([Bind("UserName,Password,NickName,Id")] User user)
-        {
-
-            if (ModelState.IsValid)
-            {
-                var q = from u in _service.GetAll()
-                        where u.UserName == user.UserName
-                        select u;
-                if (q.Count() > 0)
-                {
-                    ViewData["Error"] = "UserName already exist!";
-                }
-                else
-                {
-                    Console.WriteLine("yup here!\n");
-                    _service.Add(user);
-                    //await _service.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
-            }
-            return View(user);
-        }
-
-
-        public IActionResult Login()
-        {
-            return View();
-        }
-
-        // POST: Users/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Login([Bind("UserName,Password")] User user)
-        {
-            if (ModelState.IsValid)
-            {
-                var q = _service.GetAll().Where(u => u.UserName == user.UserName && u.Password == user.Password);
-                if (q.Any())
-                {
-                    return RedirectToAction(nameof(Index), "Users");
-                }
-                else
-                {
-                    ViewData["Error"] = "Username or password incorrect!";
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(user);
-        }
-
+        [Authorize]
         public IActionResult Edit(int? id)
         {
             if (id == null)
@@ -150,6 +96,7 @@ namespace Whatsapp2Server.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public IActionResult Edit(int id, [Bind("Id,UserName,Password,NickName,ProfilePicSrc")] User user)
         {
 
@@ -168,6 +115,7 @@ namespace Whatsapp2Server.Controllers
         }
 
         // GET: Users/Delete/5
+        [Authorize]
         public IActionResult Delete(int? id)
         {
             if (id == null)
@@ -187,6 +135,7 @@ namespace Whatsapp2Server.Controllers
         // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public IActionResult DeleteConfirmed(int id)
         {
             if (_service.Get((int)id) == null)
@@ -202,9 +151,107 @@ namespace Whatsapp2Server.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-/*        private bool UserExists(int id)
+        /*        private bool UserExists(int id)
+                {
+                  return (_service.GetAll()?.Any(e => e.Id == id)).GetValueOrDefault();
+                }*/
+
+        // GET: Users/Create
+        public IActionResult Register()
         {
-          return (_service.GetAll()?.Any(e => e.Id == id)).GetValueOrDefault();
-        }*/
+            return View();
+        }
+
+        // POST: Users/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Register([Bind("Id,UserName,Password,NickName,ProfilePicSrc")] User user)
+        {
+            if (ModelState.IsValid)
+            {
+                var q = from u in _service.GetAll()
+                        where u.UserName == user.UserName
+                        select u;
+
+                if (q.Count() > 0)
+                {
+                    ViewData["Error"] = "Unable to comply; cannot register this user.";
+                }
+                else
+                {
+                    Signin(user);
+                    //HttpContext.Session.SetString("username", user.UserName);
+                    _service.Create(user.UserName, user.Password, user.NickName, user.ProfilePicSrc);
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            return View(user);
+        }
+
+        // GET: Users/Create
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        // POST: Users/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Login([Bind("UserName,Password")] User user)
+        {
+            if (ModelState.IsValid)
+            {
+                var q = _service.GetAll().Where(u => u.UserName == user.UserName && u.Password == user.Password);
+                
+                if(q.Any())
+                {
+                    Signin(q.First());
+                    //HttpContext.Session.SetString("username", q.First().UserName);
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ViewData["Error"] = "Username and/or password are incorrect.";
+                }
+            }
+            return View(user);
+        }
+
+        private async void Signin(User account)
+        {
+            var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, account.UserName),
+                };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperties = new AuthenticationProperties
+            {
+                //ExpireUtc = DataTimeOffset.UtcNow.AddMinutes(10)
+            };
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
+        }
+
+        [Authorize]
+        public void Logout()
+        {
+            HttpContext.SignOutAsync();
+        }
+
+        // GET: Users/Create
+        public IActionResult AccessDinied()
+        {
+            return View();
+        }
+
     }
 }

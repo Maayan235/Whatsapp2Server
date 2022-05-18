@@ -6,9 +6,9 @@ namespace Whatsapp2Server.Models
     {
         //[Required]
         public int Id { get; set; }
-        //[Required]
+        [Required]
         public string UserName { get; set; }
-        //[Required]
+        [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
         
