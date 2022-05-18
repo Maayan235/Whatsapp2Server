@@ -12,12 +12,11 @@ namespace Whatsapp2Server.Models
         [DataType(DataType.Password)]
         public string Password { get; set; }
         
-        public string nickName { get; set; }
-
-        public string serverName { get; set; }
-        public ICollection<User> contacts { get; set; }
-        public ICollection<Chat> chats { get; set; }
-        public string profilePicSrc { get; set; }
+        public string NickName { get; set; }
+        public string ServerName { get; set; }
+        public ICollection<User> Contacts { get; set; }
+        public ICollection<Chat> Chats { get; set; }
+        public string ProfilePicSrc { get; set; }
 
     }
 }
