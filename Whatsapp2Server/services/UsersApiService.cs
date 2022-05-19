@@ -29,6 +29,14 @@ namespace Whatsapp2Server.Services
             User user = users.FirstOrDefault(x => x.UserName == username);
             return user.Contacts;
         }
+
+        public void AddToContacts(string username, int id, string contactname)
+        {
+            User user = users.FirstOrDefault(x => x.UserName == username);
+            User contact = users.FirstOrDefault(x => x.UserName == username && x.Id == id);
+            user.Contacts.Add(contact);
+        }
+
         /*public bool Create()
         {
             return users.FirstOrDefault(x => x.Id == id);

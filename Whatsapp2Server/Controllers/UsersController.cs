@@ -183,6 +183,7 @@ namespace Whatsapp2Server.Controllers
                 {
                     Signin(user);
                     //HttpContext.Session.SetString("username", user.UserName);
+                    //var userid = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
                     _service.Create(user.UserName, user.Password, user.NickName, user.ProfilePicSrc);
                     return RedirectToAction(nameof(Index));
                 }
@@ -251,6 +252,19 @@ namespace Whatsapp2Server.Controllers
         public IActionResult AccessDinied()
         {
             return View();
+        }
+
+        public IActionResult Search()
+        {
+            return View(_service.GetAll());
+        }
+
+        public async Task<IActionResult> Search2(string query)
+        {
+            if (query == null)
+                return View(_service.GetAll());
+            var q = _service.GetAll().Where(user => user.UserName.Contains(query) || user.NickName.Contains(query));
+            return PartialView(q.ToList());
         }
 
     }

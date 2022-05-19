@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,6 @@ namespace Whatsapp2Server.Controllers
     public class UsersAPIController : Controller
     {
         private readonly UsersApiService _service;
-
 
         public UsersAPIController()//Whatsapp2ServerContext context)
         {
@@ -53,30 +53,46 @@ namespace Whatsapp2Server.Controllers
             return BadRequest();
         }
 
+
         [HttpPost("logIn")]
         // public async Task<IActionResult> Create([Bind("UserName, Password, NickName")] User user)
-        public IActionResult login([Bind("Chats, ProfilePicSrc, ServerName,Id, UserName, Password, NickName, Contacts")] User user)
+        public IActionResult login([Bind("UserName")] User username)
         {
             if (ModelState.IsValid)
             {
+                User user = _service.GetUser(username.UserName);
                 Signin(user);
                 //_service.Update(user);
                 return Created(string.Format("api/contacts/logIn", user.UserName), user);
             }
-            return BadRequest();
+            return BadRequest();       
         }
 
         [HttpGet("contacts")]
         [Authorize]
         public IActionResult sendContacts()
         {
-            
+
             // check cookies ,, get the username of the connected user... (!)
-            var username = HttpContext.User.FindFirst(ClaimTypes.Name).Value; 
+            string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
 
             return Json(_service.Contacts(username));
             // }
 
+        }
+
+        [HttpPost("contacts")]
+        [Authorize]
+        public IActionResult AddContact([Bind("Id, UserName")] User contact)
+        {
+            if (_service.GetUser(contact.UserName) != null)
+            {
+                //var username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+                string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+                _service.AddToContacts(username, contact.Id, contact.UserName);
+                return Created(string.Format("api/contacts/", contact.UserName), contact);
+            }
+            return BadRequest();
         }
 
         [HttpGet("contacts/{id}")]         //id = username (!)

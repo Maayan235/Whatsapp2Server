@@ -10,7 +10,7 @@ namespace Whatsapp2Server.services
             //throw new NotImplementedException();
             return findChat(user1, user2); 
         }
-        public ICollection<Chat> getAll()
+        public ICollection<Chat> GetAll()
         {
             return _chats;
         }
