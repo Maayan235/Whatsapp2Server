@@ -6,7 +6,11 @@ namespace Whatsapp2Server.Services
     {
         private static ICollection<User> users = new List<User>();
 
-
+        public UsersApiService()
+        {
+            User user = new User() { UserName = "Yarin", ServerName = "5286", Id = 100, NickName = "Yerin" , Password="123456",ProfilePicSrc=""};
+            users.Add(user);
+        }
         public User GetUser(string username)
         {
             User user= users.FirstOrDefault(x => x.UserName == username);
@@ -29,6 +33,15 @@ namespace Whatsapp2Server.Services
             User user = users.FirstOrDefault(x => x.UserName == username);
             return user.Contacts;
         }
+
+        public void AddToContacts(string username, int id, string contactname)
+        {
+            User user = users.FirstOrDefault(x => x.UserName == username);
+            User contact = users.FirstOrDefault(x => x.UserName == contactname);
+            user.Contacts.Add(contact);
+            User  bdika = user.Contacts.FirstOrDefault(x => x.UserName == contactname);
+        }
+
         /*public bool Create()
         {
             return users.FirstOrDefault(x => x.Id == id);

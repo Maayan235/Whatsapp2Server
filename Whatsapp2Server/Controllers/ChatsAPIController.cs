@@ -11,11 +11,11 @@ using Whatsapp2Server.services;
 
 namespace Whatsapp2Server.Controllers
 {
-    public class ChatsController : Controller
+    public class ChatsAPIController : Controller
     {
         private readonly IChat _service;
 
-        public ChatsController(Whatsapp2ServerContext context)
+        public ChatsAPIController(Whatsapp2ServerContext context)
         {
             _service = new ChatService();
         }
@@ -62,6 +62,19 @@ namespace Whatsapp2Server.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(chat);
+        }
+
+        // POST: Chats/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        public IActionResult Search(string query)
+        {
+
+            return View(_service.GetAll());
+/*            var q = 
+
+            return View(_service.GetAll().ToList());*/
         }
 
         // GET: Chats/Edit/5
@@ -116,45 +129,45 @@ namespace Whatsapp2Server.Controllers
         }*/
 
         // GET: Chats/Delete/5
-       /* public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Chat == null)
-            {
-                return NotFound();
-            }
+        /* public async Task<IActionResult> Delete(int? id)
+         {
+             if (id == null || _context.Chat == null)
+             {
+                 return NotFound();
+             }
 
-            var chat = await _context.Chat
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (chat == null)
-            {
-                return NotFound();
-            }
+             var chat = await _context.Chat
+                 .FirstOrDefaultAsync(m => m.Id == id);
+             if (chat == null)
+             {
+                 return NotFound();
+             }
 
-            return View(chat);
-        }
+             return View(chat);
+         }
 
-        // POST: Chats/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Chat == null)
-            {
-                return Problem("Entity set 'Whatsapp2ServerContext.Chat'  is null.");
-            }
-            var chat = await _context.Chat.FindAsync(id);
-            if (chat != null)
-            {
-                _context.Chat.Remove(chat);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+         // POST: Chats/Delete/5
+         [HttpPost, ActionName("Delete")]
+         [ValidateAntiForgeryToken]
+         public async Task<IActionResult> DeleteConfirmed(int id)
+         {
+             if (_context.Chat == null)
+             {
+                 return Problem("Entity set 'Whatsapp2ServerContext.Chat'  is null.");
+             }
+             var chat = await _context.Chat.FindAsync(id);
+             if (chat != null)
+             {
+                 _context.Chat.Remove(chat);
+             }
 
-        private bool ChatExists(int id)
-        {
-          return _context.Chat.Any(e => e.Id == id);
-        }*/
+             await _context.SaveChangesAsync();
+             return RedirectToAction(nameof(Index));
+         }
+
+         private bool ChatExists(int id)
+         {
+           return _context.Chat.Any(e => e.Id == id);
+         }*/
     }
 }

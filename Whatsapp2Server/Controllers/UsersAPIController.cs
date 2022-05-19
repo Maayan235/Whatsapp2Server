@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,6 @@ namespace Whatsapp2Server.Controllers
     public class UsersAPIController : Controller
     {
         private readonly UsersApiService _service;
-
 
         public UsersAPIController()//Whatsapp2ServerContext context)
         {
@@ -47,36 +47,54 @@ namespace Whatsapp2Server.Controllers
         {
             if (ModelState.IsValid)
             {
+                user.ServerName = "5286";
                 _service.Add(user);
                 return Created(string.Format("api/[Controller]/" + user.Id, user.Id), user);
             }
             return BadRequest();
         }
 
+
         [HttpPost("logIn")]
         // public async Task<IActionResult> Create([Bind("UserName, Password, NickName")] User user)
-        public IActionResult login([Bind("Chats, ProfilePicSrc, ServerName,Id, UserName, Password, NickName, Contacts")] User user)
+        public IActionResult login([Bind("UserName")] User user)
         {
             if (ModelState.IsValid)
             {
-                Signin(user);
+                User loggedIn = _service.GetUser(user.UserName);
+                Signin(loggedIn);
                 //_service.Update(user);
-                return Created(string.Format("api/contacts/logIn", user.UserName), user);
+                return Created(string.Format("api/contacts/logIn", loggedIn.UserName), loggedIn);
             }
-            return BadRequest();
+            return BadRequest();       
         }
 
         [HttpGet("contacts")]
         [Authorize]
         public IActionResult sendContacts()
         {
-            
+
             // check cookies ,, get the username of the connected user... (!)
-            var username = HttpContext.User.FindFirst(ClaimTypes.Name).Value; 
+            string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
 
             return Json(_service.Contacts(username));
             // }
 
+        }
+
+        [HttpPost("addContact")]
+        [Authorize]
+        public IActionResult AddContact([Bind("UserName,ServerName,NickName")] User contact)
+        {
+            User newContact = _service.GetUser(contact.UserName);
+            if (newContact != null)
+            {
+                //var username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+                string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+                _service.AddToContacts(username, newContact.Id, newContact.UserName);
+                return Created(string.Format("api/contacts/", contact.UserName), contact);
+            }
+            return BadRequest();
         }
 
         [HttpGet("contacts/{id}")]         //id = username (!)
@@ -116,6 +134,10 @@ namespace Whatsapp2Server.Controllers
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
         }
+
+
+
+
 
         // GET: Users/Details/5
         /*[Authorize]
