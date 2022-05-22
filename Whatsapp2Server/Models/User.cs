@@ -15,8 +15,9 @@ namespace Whatsapp2Server.Models
             Contacts = new Collection<User>();
             Chats = new Collection<Chat>();
             ProfilePicSrc = "";
-        }
 
+        }
+         
         //[Required]
         public int Id { get; set; }
         //[Required]
