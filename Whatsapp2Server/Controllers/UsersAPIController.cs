@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -10,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Whatsapp2Server.Data;
 using Whatsapp2Server.Models;
 using Whatsapp2Server.Services;
@@ -29,11 +32,28 @@ namespace Whatsapp2Server.Controllers
             _configuration = configuration;
         }
 
-/*        [HttpPost]
-        public IActionResult Post(string username, string password)
+        [HttpPost]
+        public IActionResult Post(string username)
         {
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, _configuration["JWTParams:Subject"]),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub, DateTime.UtcNow.ToString()),
+                new Claim("UserID", username)
+            };
 
-        }*/
+            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWTParams:SecretKey"]));
+            var mac = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+            var token = new JwtSecurityToken(
+                _configuration["JWTParams:Issuer"],
+                _configuration["JWTParams:Audience"],
+                claims,
+                expires: DateTime.UtcNow.AddMinutes(10),
+                signingCredentials: mac);
+
+            return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+        }
 
         // GET: Users
         [HttpGet("{username}")]
@@ -69,6 +89,7 @@ namespace Whatsapp2Server.Controllers
             if (ModelState.IsValid)
             {
                 User loggedIn = _service.GetUser(user.UserName);
+                Post(user.UserName);
                 Signin(loggedIn);
                 //_service.Update(user);
                 return Created(string.Format("api/contacts/logIn", loggedIn.UserName), loggedIn);
@@ -96,10 +117,14 @@ namespace Whatsapp2Server.Controllers
             User newContact = _service.GetUser(contact.UserName);
             if (newContact != null)
             {
-                //var username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
-                string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
-                _service.AddToContacts(username, newContact.Id, newContact.UserName);
-                return Created(string.Format("api/contacts/", contact.UserName), contact);
+                if (newContact.ServerName == contact.ServerName)
+                {
+                    User copyContact = new User() { UserName = contact.UserName, NickName = contact.UserName, ServerName = contact.ServerName, ProfilePicSrc = newContact.ProfilePicSrc };
+                    //var username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+                    string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+                    _service.AddToContacts(username, copyContact);
+                    return Created(string.Format("api/contacts/", contact.UserName), contact);
+                }
             }
             return BadRequest();
         }

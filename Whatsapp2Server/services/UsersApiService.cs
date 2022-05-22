@@ -43,7 +43,7 @@ namespace Whatsapp2Server.Services
             return user.Contacts;
         }
 
-        public void AddToContacts(string username, int id, string contactname)
+        public void AddToContacts(string username,User newContact)
         {
             User user = users.FirstOrDefault(x => x.UserName == username);
             User contact = users.FirstOrDefault(x => x.UserName == contactname);
