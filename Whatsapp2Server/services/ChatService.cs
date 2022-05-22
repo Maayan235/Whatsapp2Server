@@ -1,4 +1,4 @@
-﻿using Whatsapp2Server.Models;
+﻿/*using Whatsapp2Server.Models;
 
 namespace Whatsapp2Server.services
 { 
@@ -20,10 +20,10 @@ namespace Whatsapp2Server.services
             _chats.Add(chat);
         }
 
-        /*public void Add(User user1, User user2)
+        *//*public void Add(User user1, User user2)
         {
 
-        }*/
+        }*//*
 
         public Message getLastMessage(User user1,User user2)
         {
@@ -55,3 +55,4 @@ namespace Whatsapp2Server.services
 
     }
 }
+*/

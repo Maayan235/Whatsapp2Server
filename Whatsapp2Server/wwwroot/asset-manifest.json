@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.a95e6264.css",
-    "main.js": "/static/js/main.f505c4fc.js",
+    "main.css": "/static/css/main.c289f190.css",
+    "main.js": "/static/js/main.bc77b008.js",
     "static/media/soundWaves.gif": "/static/media/soundWaves.cf0883b7fb2e7c428aff.gif",
     "static/media/Asaf.jpg": "/static/media/Asaf.511115d82da993b3b7f2.jpg",
     "static/media/itamar.jpg": "/static/media/itamar.e3a834050626525c87ea.jpg",
@@ -13,11 +13,11 @@
     "static/media/camera.png": "/static/media/camera.8863c1d2789825f76759.png",
     "static/media/microphone.png": "/static/media/microphone.effb021cb32309301520.png",
     "index.html": "/index.html",
-    "main.a95e6264.css.map": "/static/css/main.a95e6264.css.map",
-    "main.f505c4fc.js.map": "/static/js/main.f505c4fc.js.map"
+    "main.c289f190.css.map": "/static/css/main.c289f190.css.map",
+    "main.bc77b008.js.map": "/static/js/main.bc77b008.js.map"
   },
   "entrypoints": [
-    "static/css/main.a95e6264.css",
-    "static/js/main.f505c4fc.js"
+    "static/css/main.c289f190.css",
+    "static/js/main.bc77b008.js"
   ]
 }

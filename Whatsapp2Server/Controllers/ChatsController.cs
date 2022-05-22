@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -65,7 +65,7 @@ namespace Whatsapp2Server.Controllers
         }
 
         // GET: Chats/Edit/5
-        /*public async Task<IActionResult> Edit(int? id)
+        *//*public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _service.getAll() == null)
             {
@@ -113,10 +113,10 @@ namespace Whatsapp2Server.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(chat);
-        }*/
+        }*//*
 
         // GET: Chats/Delete/5
-       /* public async Task<IActionResult> Delete(int? id)
+       *//* public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Chat == null)
             {
@@ -155,6 +155,7 @@ namespace Whatsapp2Server.Controllers
         private bool ChatExists(int id)
         {
           return _context.Chat.Any(e => e.Id == id);
-        }*/
+        }*//*
     }
 }
+*/

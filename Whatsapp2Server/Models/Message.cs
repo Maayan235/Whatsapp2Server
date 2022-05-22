@@ -2,11 +2,22 @@
 {
     public class Message
     {
-        public int Id { get; set; } 
-        public string content { get; set; }
-        public DateTime Date { get; set; }
-        public int senderID { get; set; }
+public Message()
+        {
+            id = 0;
+            this.message = "";
+            this.time = DateTime.Now;
+            this.fromMe = true;
+            this.senderId = "";
+            this.chat = null;
+        }
 
+        public int id { get; set; }
+        public string message { get; set; }
+        public DateTime time { get; set; }
+        public bool fromMe { get; set; }
+
+        public string senderId { get; set; }
         public Chat chat{ get; set; } 
     
     }

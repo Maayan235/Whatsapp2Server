@@ -1,13 +1,23 @@
-﻿namespace Whatsapp2Server.Models
+﻿using System.Collections.ObjectModel;
+
+namespace Whatsapp2Server.Models
 {
     public class Chat
     {
-        public int Id { get; set; }
 
-        public HashSet<User> contacts { get; set; }
+        public Chat()
+        {
+            id = 0;
+            contacts = new Collection<User2>();
+            messages = new Collection<Message>();
+            lastMessage = new Message();
+        }
+        public int id { get; set; }
+
+        public  ICollection<User2> contacts { get; set; }
 
         public ICollection<Message> messages { get; set; } 
 
-        public Message LastMessage { get; set; }
+        public Message lastMessage { get; set; }
     }
 }
