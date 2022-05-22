@@ -8,9 +8,18 @@ namespace Whatsapp2Server.Services
 
         public UsersApiService()
         {
-            User user = new User() { UserName = "Yarin", ServerName = "5286", Id = 100, NickName = "Yerin" , Password="123456",ProfilePicSrc=""};
-            users.Add(user);
+            if (users.Count == 0)
+            {
+                User user = new User() { UserName = "Yarin", ServerName = "5286", Id = 100, NickName = "Yerin", Password = "123456", ProfilePicSrc = "" };
+                User defUser2 = new User() { UserName = "Maayan", ServerName = "5286", Password = "123456", NickName = "Shakira Shakira", ProfilePicSrc = "" };
+                User defUser3 = new User() { UserName = "Maayan1", ServerName = "5286", Password = "123456", NickName = "Shakira Shakira", ProfilePicSrc = "" };
+                users.Add(user);
+                users.Add(defUser2);
+                users.Add(defUser3);
+                AddToContacts(user.UserName, defUser2.Id, defUser2.UserName);
+            }
         }
+
         public User GetUser(string username)
         {
             User user= users.FirstOrDefault(x => x.UserName == username);
@@ -39,8 +48,8 @@ namespace Whatsapp2Server.Services
             User user = users.FirstOrDefault(x => x.UserName == username);
             User contact = users.FirstOrDefault(x => x.UserName == contactname);
             user.Contacts.Add(contact);
-            User  bdika = user.Contacts.FirstOrDefault(x => x.UserName == contactname);
-        }
+/*            User  bdika = user.Contacts.FirstOrDefault(x => x.UserName == contactname);
+*/        }
 
         /*public bool Create()
         {

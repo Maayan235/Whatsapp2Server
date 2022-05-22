@@ -21,12 +21,19 @@ namespace Whatsapp2Server.Controllers
     public class UsersAPIController : Controller
     {
         private readonly UsersApiService _service;
+        public IConfiguration _configuration;
 
-        public UsersAPIController()//Whatsapp2ServerContext context)
+        public UsersAPIController(IConfiguration configuration) 
         {
             _service = new UsersApiService();
+            _configuration = configuration;
         }
 
+/*        [HttpPost]
+        public IActionResult Post(string username, string password)
+        {
+
+        }*/
 
         // GET: Users
         [HttpGet("{username}")]
@@ -113,8 +120,45 @@ namespace Whatsapp2Server.Controllers
                 return Json(user2);
             }
             return BadRequest();
-
         }
+
+        // todo: change
+        // Put contact id
+        [HttpPut("contacts/{id}")]         //id = username (!)
+        [Authorize]
+        public IActionResult EditSpecificContact([Bind("ServerName,NickName")] User contact, string id)
+        {
+
+            var thisUserName = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+            // todo: to change to id 
+            User editedContact = _service.Contacts(thisUserName).FirstOrDefault(x => x.UserName == id);
+            if (editedContact == null)
+            {
+                return BadRequest();
+            }
+            editedContact.ServerName = contact.ServerName;
+            editedContact.NickName = contact.NickName;
+            return Accepted(string.Format("api/contacts/", thisUserName), _service.GetUser(thisUserName));
+        }
+
+        // todo: check
+        // Delete contact id
+        [HttpDelete("deleteContact")]         //id = username (!)
+        [Authorize]
+        public IActionResult DeleteSpecificContact(string id)
+        {
+
+            var thisUserName = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+            // todo: to change to id 
+            User contact = _service.Contacts(thisUserName).FirstOrDefault(x => x.UserName == id);
+            if (contact == null)
+            {
+                return BadRequest();
+            }
+            _service.Contacts(thisUserName).Remove(contact);
+            return Accepted(string.Format("api/contacts/", thisUserName), _service.GetUser(thisUserName));
+        }
+
         private async void Signin(User account)
         {
             var claims = new List<Claim>

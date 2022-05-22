@@ -19,7 +19,7 @@ namespace Whatsapp2Server.Models
 
         //[Required]
         public int Id { get; set; }
-        [Required]
+        //[Required]
         public string UserName { get; set; }
 /*        [Required] 
 */        [DataType(DataType.Password)]
