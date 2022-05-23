@@ -18,10 +18,10 @@ namespace Whatsapp2Server.Services
                 users.Add(user);
                 users.Add(defUser2);
                 users.Add(defUser3);
-                Message m1 = new Message() { fromMe = true, message = "hiiiiiii", senderId = "Yarin", time = DateTime.Now };
+                Message m1 = new Message() {id = -1, fromMe = true, content = "hiiiiiii", senderId = "Yarin", time = DateTime.Now };
                 Chat chat = new Chat();
-                chat.contacts.Add(user);
-                chat.contacts.Add(defUser2);
+                chat.contacts[0] = "Yarin";
+                chat.contacts[1] = "Maayan";
                 chat.messages.Add(m1);
                 user.chats.Add(chat);
                 AddToContacts(user.id, defUser2);
@@ -31,7 +31,7 @@ namespace Whatsapp2Server.Services
         {
             User2 user = GetUser(username);
             User2 contact = GetUser(contactName);
-            Chat chat =user.chats.FirstOrDefault(x => x.contacts.Contains(user) && x.contacts.Contains(contact));
+            Chat chat =user.chats.FirstOrDefault(x => Array.Exists( x.contacts,element => element == user.id) && Array.Exists(x.contacts, element => element == contact.id));
             return chat;
         }
         public void editContact(User2 contact)

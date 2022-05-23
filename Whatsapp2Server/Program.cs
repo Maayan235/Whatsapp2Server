@@ -53,6 +53,30 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         });
 });
 */
+
+
+
+/*builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Policy1",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000/"
+                              );
+        });
+
+    options.AddPolicy("AnotherPolicy",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000/")
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+        });
+});
+
+builder.Services.AddControllers();
+
+*/
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -61,8 +85,8 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
 }
 
-/*app.UseCors("Allow All");
-*/
+app.UseCors("Allow All");
+
 app.UseStaticFiles();
 app.UseSession();
 app.UseAuthentication();

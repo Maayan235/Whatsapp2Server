@@ -15,6 +15,8 @@ namespace Whatsapp2Server.Models
             contacts = new Collection<User2>();
             chats = new Collection<Chat>();
             profilePicSrc = "";
+            last = "";
+            lastdate = DateTime.Now;
         }
          
         //[Required]
@@ -28,6 +30,10 @@ namespace Whatsapp2Server.Models
         public string name { get; set; }
         public string server { get; set; }
         public ICollection<User2> contacts { get; set; }
+
+        public string last { get; set; }
+
+        public DateTime lastdate { get; set; }  
         public ICollection<Chat> chats { get; set; }
         public string profilePicSrc { get; set; }
 
