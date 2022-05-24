@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -80,7 +80,7 @@ namespace Whatsapp2Server.Controllers
             }
             return View(message);
         }
-        /*
+        *//*
         // POST: Messages/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -157,6 +157,7 @@ namespace Whatsapp2Server.Controllers
         {
           return _context.Message.Any(e => e.Id == id);
         }
-        */
+        *//*
     }
 }
+*/

@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿/*using Microsoft.AspNetCore.Mvc;
 using Whatsapp2Server.Services;
 using Whatsapp2Server.Models;
 using Whatsapp2Server.services;
 
-/*namespace Whatsapp2Server.Controllers
+*//*namespace Whatsapp2Server.Controllers
 {
 
 
@@ -26,7 +26,7 @@ using Whatsapp2Server.services;
         }
 
     }
-}*/
+}*//*
 
 
 using System;
@@ -117,4 +117,4 @@ namespace Whatsapp2Server.Controllers
     }
 }
         // GET: Users
-        
+        */

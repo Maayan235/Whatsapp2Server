@@ -4,27 +4,55 @@ namespace Whatsapp2Server.Services
 {
     public class UsersApiService
     {
-        private static ICollection<User> users = new List<User>();
+        private static ICollection<User2> users = new List<User2>();
 
+
+        
         public UsersApiService()
         {
             if (users.Count == 0)
             {
-                User user = new User() { UserName = "Yarin", ServerName = "5286", Id = 100, NickName = "Yerin", Password = "123456", ProfilePicSrc = "" };
-                User defUser2 = new User() { UserName = "Maayan", ServerName = "5286", Password = "123456", NickName = "Shakira Shakira", ProfilePicSrc = "" };
-                User defUser3 = new User() { UserName = "Maayan1", ServerName = "5286", Password = "123456", NickName = "Shakira Shakira", ProfilePicSrc = "" };
+                User2 user = new User2() {id = "Yarin", server = "5286", name = "Yerin", password = "123456", profilePicSrc = "" };
+                User2 defUser2 = new User2() { id = "Maayan", server = "5286", name = "satla", password = "123456", profilePicSrc = "" };
+                User2 defUser3 = new User2() { id = "Avital", server = "5286", name = "vita", password = "123456", profilePicSrc = "" };
                 users.Add(user);
                 users.Add(defUser2);
                 users.Add(defUser3);
-                AddToContacts(user.UserName, defUser2.Id, defUser2.UserName);
+                Message m1 = new Message() {id = -1, fromMe = true, content = "hiiiiiii", senderId = "Yarin", time = DateTime.Now };
+                Chat chat = new Chat();
+                chat.contacts[0] = "Yarin";
+                chat.contacts[1] = "Maayan";
+                chat.messages.Add(m1);
+                user.chats.Add(chat);
+                AddToContacts(user.id, defUser2);
             }
         }
-
-        public User GetUser(string username)
+        public Chat getChat(string username, string contactName)
         {
-            User user= users.FirstOrDefault(x => x.UserName == username);
+            User2 user = GetUser(username);
+            User2 contact = GetUser(contactName);
+            Chat chat =user.chats.FirstOrDefault(x => Array.Exists( x.contacts,element => element == user.id) && Array.Exists(x.contacts, element => element == contact.id));
+            return chat;
+        }
+        public void editContact(User2 contact)
+        {
+            User2 user = GetUser(contact.id);
+            user.server = contact.server;
+            user.name = contact.name;
+            Console.WriteLine("hi");
+
+        }
+        public void deleteContact(User2 thisUser, string contactId)
+        {
+            User2 contact = thisUser.contacts.FirstOrDefault(x => x.id == contactId);
+            thisUser.contacts.Remove(contact);
+        }
+
+        public User2 GetUser(string username)
+        {
+            User2 user= users.FirstOrDefault(x => x.id == username);
             if(user != null){
-                if (user.UserName == username)
+                if (user.id == username)
                 {
                     return user;
                 }
@@ -32,22 +60,22 @@ namespace Whatsapp2Server.Services
             }
             return null;
         }
-        public void Add(User user)
+        public void Add(User2 user)
         {
             users.Add(user);
         }
 
-        public ICollection<User> Contacts(string username)
+        public ICollection<User2> Contacts(string username)
         {
-            User user = users.FirstOrDefault(x => x.UserName == username);
-            return user.Contacts;
+            User2 user = users.FirstOrDefault(x => x.id == username);
+            return user.contacts;
         }
 
-        public void AddToContacts(string username,User newContact)
+        public void AddToContacts(string username,User2 newContact)
         {
-            User user = users.FirstOrDefault(x => x.UserName == username);
-            User contact = users.FirstOrDefault(x => x.UserName == contactname);
-            user.Contacts.Add(contact);
+            User2 user = users.FirstOrDefault(x => x.id == username);
+            //User2 contact = users.FirstOrDefault(x => x.id == newContact.id);
+            user.contacts.Add(newContact);
 /*            User  bdika = user.Contacts.FirstOrDefault(x => x.UserName == contactname);
 */        }
 
