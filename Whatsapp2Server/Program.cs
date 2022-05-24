@@ -26,7 +26,7 @@ builder.Services.AddAuthentication(options =>
     options.LoginPath = "/Users/Login/";
     options.AccessDeniedPath = "/Users/AccessDenied/";
 });
-
+/*
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.RequireHttpsMetadata = false;
@@ -39,9 +39,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidIssuer = builder.Configuration["JWTParams:Issuer"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTParams:SecretKey"]))
     };
-});
+});*/
 
-builder.Services.AddCors(options =>
+/*builder.Services.AddCors(options =>
 {
     options.AddPolicy("Allow All",
         builder =>
@@ -52,7 +52,7 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader();
         });
 });
-
+*/
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -61,8 +61,8 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
 }
 
-app.UseCors("Allow All");
-app.UseStaticFiles();
+/*app.UseCors("Allow All");
+*/app.UseStaticFiles();
 app.UseSession();
 app.UseAuthentication();
 app.UseRouting();
