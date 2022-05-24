@@ -18,7 +18,7 @@ namespace Whatsapp2Server.Services
                 users.Add(user);
                 users.Add(defUser2);
                 users.Add(defUser3);
-                Message m1 = new Message() {id = -1, fromMe = true, content = "hiiiiiii", senderId = "Yarin", time = DateTime.Now };
+                Message m1 = new Message() {id = -1, fromMe = true, content = "hiiiiiii", from = "Yarin", time = DateTime.Now };
                 Chat chat = new Chat();
                 chat.contacts[0] = "Yarin";
                 chat.contacts[1] = "Maayan";

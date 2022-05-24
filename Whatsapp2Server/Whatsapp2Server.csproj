@@ -614,8 +614,8 @@
 
   <ItemGroup>
     <None Include="wwwroot\static\css\main.c289f190.css.map" />
-    <None Include="wwwroot\static\js\main.13d98958.js" />
-    <None Include="wwwroot\static\js\main.13d98958.js.map" />
+    <None Include="wwwroot\static\js\main.6d0fc15f.js" />
+    <None Include="wwwroot\static\js\main.6d0fc15f.js.map" />
   </ItemGroup>
 
   <ItemGroup>

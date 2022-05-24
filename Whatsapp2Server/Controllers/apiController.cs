@@ -17,6 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using Whatsapp2Server.Data;
 using Whatsapp2Server.Models;
 using Whatsapp2Server.Services;
+using System.Net.Http;
 
 namespace Whatsapp2Server.Controllers
 {
@@ -26,6 +27,7 @@ namespace Whatsapp2Server.Controllers
     [Route("[controller]")]
     public class apiController : Controller
     {
+        private static readonly HttpClient client = new HttpClient();
         private readonly UsersApiService _service;
         public IConfiguration _configuration;
 
@@ -42,6 +44,40 @@ namespace Whatsapp2Server.Controllers
              return NoContent();
          }*/
 
+        [HttpPost("transfer")]
+        async public void transfer([Bind ("content", "from", "to")] Message message)
+        {
+            var values = new Dictionary<string, string>
+             {
+                { "content", message.content},
+                 { "from", message.from},
+                { "to", message.to}
+             };
+
+            var content = new FormUrlEncodedContent(values);
+
+            var response = await client.PostAsync("http://localhost:5286/api/contacts", content);
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(responseString);
+        }
+        [HttpPost("invitaions")]
+        async public void invitations([Bind("sever", "from", "to")] Invitation invitation)
+        {
+            var values = new Dictionary<string, string>
+             {
+                { "server", invitation.server},
+                 { "from", invitation.from},
+                { "to", invitation.to} 
+             };
+
+            var content = new FormUrlEncodedContent(values);
+
+            var response = await client.PostAsync("http://localhost:5286/api/contacts/" + invitation.to + "/messages", content);
+
+            var responseString = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(responseString);
+        }
 
         [HttpGet("messages/{contactId}")]
         public IActionResult getChat(string contactId)

@@ -45,35 +45,66 @@ namespace Whatsapp2Server.Controllers
             // check cookies ,, get the username of the connected user... (!)
             string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
 
-            return Json(_service.getContacts(username));
+             ICollection<User2> contacts =  _service.getContacts(username);
+            if(contacts == null)
+            {
+                return null;
+            }
+            return Json(contacts);
             // }
 
         }
         [HttpGet("{id}/messages")]
         public IActionResult getMessages(string id)
         {
+           
             string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
             Chat chat = _service.getChat(username, id);
             if (chat == null)
-                return BadRequest();
-            return Json(chat.messages);
+            {
+                Chat chat2= new Chat();
+                chat2.contacts.Append(username);
+                chat2.contacts.Append(id);
+                return Json(chat2);
+            }
+                
+            return Json(chat);
         }
 
-
-        /*[HttpPost("{id}/messages")]
+         
+        [HttpPost("{id}/messages")]
         public IActionResult postMessages([Bind("content")] Message message, string id) 
         {
             string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+            User2 myContact = _service.getContacts(username).FirstOrDefault(x => x.id == id);
+            
             Chat chat = _service.getChat(username, id);
-        }*/
+            message.from = username;
+            message.to = id;
+            chat.messages.Add(message);
+            chat.lastMessage = message;
+            myContact.lastMessage = message;
+            myContact.last = message.content;
+            myContact.lastdate = message.time;
+             
+            return Created(string.Format("api/contacts/", id + "messages"), id);
+        }
 
+
+        [HttpGet("{id}/lastMessage")]
+        public IActionResult lastMessage(string id)
+        {
+            string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+            User2 myContact = _service.getContacts(username).FirstOrDefault(x => x.id == id);
+            return Json(myContact.lastMessage);
+        }
         [HttpPost]
 
         public IActionResult AddContact([Bind("id,server,name")] User2 contact)
         {
-            User2 copyContact = new User2() { id = contact.id, name = contact.name, server = contact.server };
+            contact.profilePicSrc = "https://www.history.ox.ac.uk/sites/default/files/history/images/person/unknown_9.gif";
             string id = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
-            _service.addContact(id, copyContact);
+            _service.addContact(id, contact);
             return Created(string.Format("api/contacts/", contact.id), contact);
         }
 
@@ -96,7 +127,7 @@ namespace Whatsapp2Server.Controllers
             if (myContacts.Count > 0)
             {
                 User2 contact = myContacts.FirstOrDefault(x => x.id == id);
-                if (contact.id == id)
+                if ( contact != null && contact.id == id)
                 {
                     return Json(contact);
                 }

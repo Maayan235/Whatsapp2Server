@@ -2,22 +2,22 @@
 
 namespace Whatsapp2Server.Models
 {
-    public class Chat
+    public class Invitation
     {
         //include!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        public Chat()
+       /* public Invitation()
         {
             id = 0;
             contacts = new string[3];
             messages = new Collection<Message>();
             lastMessage = null;
-        }
-        public int id { get; set; }
+        }*/
+        //public int id { get; set; }
 
-        public  string[] contacts { get; set; }
+        public  string from { get; set; }
 
-        public ICollection<Message> messages { get; set; } 
+        public  string to { get; set; } 
 
-        public Message lastMessage { get; set; }
+        public string server{ get; set; }
     }
 }

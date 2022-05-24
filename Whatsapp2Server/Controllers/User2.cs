@@ -14,9 +14,10 @@ namespace Whatsapp2Server.Models
             server = "5286";
             contacts = new Collection<User2>();
             chats = new Collection<Chat>();
-            profilePicSrc = "";
+            profilePicSrc = "https://www.history.ox.ac.uk/sites/default/files/history/images/person/unknown_9.gif";
             last = "";
             lastdate = DateTime.Now;
+            lastMessage = null;
         }
          
         //[Required]
@@ -27,6 +28,7 @@ namespace Whatsapp2Server.Models
 */        [DataType(DataType.Password)]
         public string password { get; set; }
         
+        public Message lastMessage { get; set; }
         public string name { get; set; }
         public string server { get; set; }
         public ICollection<User2> contacts { get; set; }
@@ -36,6 +38,7 @@ namespace Whatsapp2Server.Models
         public DateTime lastdate { get; set; }  
         public ICollection<Chat> chats { get; set; }
         public string profilePicSrc { get; set; }
+
 
     }
 }
