@@ -18,6 +18,8 @@ using Whatsapp2Server.Data;
 using Whatsapp2Server.Models;
 using Whatsapp2Server.Services;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net;
 
 namespace Whatsapp2Server.Controllers
 {
@@ -45,40 +47,100 @@ namespace Whatsapp2Server.Controllers
          }*/
 
         [HttpPost("transfer")]
-        async public void transfer([Bind ("content", "from", "to")] Message message)
+        async public void transfer([Bind("content", "from", "to")] Message message)
         {
-            var values = new Dictionary<string, string>
+            /*var values = new Dictionary<string, string>
              {
                 { "content", message.content},
                  { "from", message.from},
                 { "to", message.to}
-             };
+             };*/
 
-            var content = new FormUrlEncodedContent(values);
+            IEnumerable<KeyValuePair<string, string>> queries = new List<KeyValuePair<string, string>>()
+            {
+                new KeyValuePair<string, string>("content", message.content),
+                new KeyValuePair<string, string>("from", message.from),
+                new KeyValuePair<string, string>("to", message.to)
 
-            var response = await client.PostAsync("http://localhost:5286/api/contacts", content);
+            };
+            HttpContent q = new FormUrlEncodedContent(queries);
+            using  (HttpClient client = new HttpClient())
+            { 
+                using(HttpResponseMessage response = await client.PostAsync("http://localhost:5286/api/contacts/" + message.to + "/messages", q))
+                { 
+                    using( HttpContent content = response.Content)
+                    {
+                        string myContent = await content.ReadAsStringAsync();
 
-            var responseString = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(responseString);
+                        HttpContentHeaders headers = content.Headers;
+
+                        Console.WriteLine(myContent);
+                    }
+                    
+                }
+            }
         }
-        [HttpPost("invitaions")]
+        [HttpPost("invitations")]
         async public void invitations([Bind("sever", "from", "to")] Invitation invitation)
         {
-            var values = new Dictionary<string, string>
+
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://localhost:5286/api/contacts");
+            httpWebRequest.ContentType = "application/json";
+            httpWebRequest.Method = "POST";
+
+            using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+            {
+                string json = "{\"id\":\"" + invitation.from + "\"," +
+                              "\"server\":\"" + invitation.server + "\"," +
+                              "\"name\":\"" + invitation.to + "\", }";
+
+                streamWriter.Write(json);
+            }
+
+            var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            {
+                var result = streamReader.ReadToEnd();
+            }
+
+
+
+
+
+            /*var values = new Dictionary<string, string>
              {
+
+                { "id", invitation.from},
                 { "server", invitation.server},
-                 { "from", invitation.from},
-                { "to", invitation.to} 
+                { "name", invitation.to} 
              };
+*/
+            /*IEnumerable<KeyValuePair<string, string>> queries = new List<KeyValuePair<string, string>>()
+            {
+                new KeyValuePair<string, string>("id", invitation.from),
+                new KeyValuePair<string, string>("server", invitation.server),
+                new KeyValuePair<string, string>( "name", invitation.to)
 
-            var content = new FormUrlEncodedContent(values);
+            };
+            HttpContent q = new FormUrlEncodedContent(queries);
+            using (HttpClient client = new HttpClient())
+            {
+                using (HttpResponseMessage response = await client.PostAsync("http://localhost:5286/api/contacts/", q))
+                {
+                    using (HttpContent content = response.Content)
+                    {
+                        string myContent = await content.ReadAsStringAsync();
 
-            var response = await client.PostAsync("http://localhost:5286/api/contacts/" + invitation.to + "/messages", content);
+                        HttpContentHeaders headers = content.Headers;
 
-            var responseString = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(responseString);
+                        Console.WriteLine(myContent);
+                    }
+
+                }
+            }
         }
-
+*/
+        }
         [HttpGet("messages/{contactId}")]
         public IActionResult getChat(string contactId)
         {

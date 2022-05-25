@@ -63,8 +63,9 @@ namespace Whatsapp2Server.Controllers
             if (chat == null)
             {
                 Chat chat2= new Chat();
-                chat2.contacts.Append(username);
-                chat2.contacts.Append(id);
+                chat2.contacts.Add(username);
+                chat2.contacts.Add(id);
+                _service.addChat(chat2);
                 return Json(chat2);
             }
                 

@@ -20,18 +20,19 @@ namespace Whatsapp2Server.Services
                 users.Add(defUser3);
                 Message m1 = new Message() {id = -1, fromMe = true, content = "hiiiiiii", from = "Yarin", time = DateTime.Now };
                 Chat chat = new Chat();
-                chat.contacts[0] = "Yarin";
-                chat.contacts[1] = "Maayan";
+                chat.contacts.Add( "Yarin");
+                chat.contacts.Add ( "Maayan");
                 chat.messages.Add(m1);
                 user.chats.Add(chat);
                 AddToContacts(user.id, defUser2);
             }
         }
+        
         public Chat getChat(string username, string contactName)
         {
             User2 user = GetUser(username);
             User2 contact = GetUser(contactName);
-            Chat chat =user.chats.FirstOrDefault(x => Array.Exists( x.contacts,element => element == user.id) && Array.Exists(x.contacts, element => element == contact.id));
+            Chat chat =user.chats.FirstOrDefault(x => x.contacts.Contains(user.id)&& x.contacts.Contains( contact.id));
             return chat;
         }
         public void editContact(User2 contact)
