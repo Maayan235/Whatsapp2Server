@@ -55,6 +55,27 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 */
 
 
+
+/*builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Policy1",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000/"
+                              );
+        });
+
+    options.AddPolicy("AnotherPolicy",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000/")
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+        });
+});
+
+
+*/
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
