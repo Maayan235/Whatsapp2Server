@@ -24,11 +24,13 @@ namespace Whatsapp2Server.Controllers
     public class contatsController : Controller
     {
         private readonly ContactsApiService _service;
+        private readonly UsersApiService _usersService;
         public IConfiguration _configuration;
 
         public contatsController(IConfiguration configuration)
         {
             _service = new ContactsApiService();
+            _usersService = new UsersApiService();
             _configuration = configuration;
         }
        
@@ -77,18 +79,14 @@ namespace Whatsapp2Server.Controllers
         public IActionResult postMessages([Bind("content")] Message message, string id) 
         {
             string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
-            User2 myContact = _service.getContacts(username).FirstOrDefault(x => x.id == id);
-            
-            Chat chat = _service.getChat(username, id);
-            message.from = username;
-            message.to = id;
-            chat.messages.Add(message);
-            chat.lastMessage = message;
-            myContact.lastMessage = message;
-            myContact.last = message.content;
-            myContact.lastdate = message.time;
-             
-            return Created(string.Format("api/contacts/", id + "messages"), id);
+            if(_service.addMessage(message.content, username, id) == 0)
+            {
+                return Created(string.Format("api/contacts/", id + "messages"), id);
+
+            }
+            _service.addMessageInOther(message.content, username, id);
+
+            return BadRequest();
         }
 
 
@@ -102,10 +100,22 @@ namespace Whatsapp2Server.Controllers
         [HttpPost]
 
         public IActionResult AddContact([Bind("id,server,name")] User2 contact)
-        {
-            contact.profilePicSrc = "https://www.history.ox.ac.uk/sites/default/files/history/images/person/unknown_9.gif";
+        {   
+
+            
+            if(_usersService.GetUser(contact.id) == null)
+            {
+                return BadRequest();
+            }
+            User2 user = new User2();
+            user.profilePicSrc = "https://www.history.ox.ac.uk/sites/default/files/history/images/person/unknown_9.gif";
+            user.name = contact.name;
+            user.server = contact.server;
+
             string id = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+            User2 thisUser = _usersService.GetUser(id);
             _service.addContact(id, contact);
+            _service.addContactInOther(thisUser, contact.id);
             return Created(string.Format("api/contacts/", contact.id), contact);
         }
 
@@ -168,10 +178,46 @@ namespace Whatsapp2Server.Controllers
             return BadRequest();
         }
 
+        [HttpGet("{id}/messages/{id2}")]
+        public IActionResult getSpecificMessage(string id, int id2)
+        {
+            var thisUserName = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+            Message message = _service.getSpecificMessage(thisUserName, id, id2);
+            if (message == null)
+                return BadRequest();
+            return Json(message);
+        }
+        [HttpPut("{id}/messages/{id2}")]
+        public IActionResult EditSpecificMessage([Bind("content")] Message message, string id, int id2)
+        {
+            var thisUserName = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+            Message thisMessage = _service.getSpecificMessage(thisUserName, id, id2);
+            if (thisMessage == null)
+            {
+                return BadRequest();
+            }
+            thisMessage.content = message.content;
+            return Ok();
 
+            // todo: check
+            // Delete contact id
+        }
+        [HttpDelete("{id}/messages/{id2}")]
+        public IActionResult DeleteSpecificMessage(string id, int id2)
+        {
+            var thisUserName = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+            Chat chat = _service.getChat(thisUserName, id);
+            Message thisMessage = _service.getSpecificMessage(thisUserName, id, id2);
+            if (thisMessage == null)
+            {
+                return BadRequest();
+            }
+            chat.messages.Remove(thisMessage);
+            return Ok();
 
-        // todo: check
-        // Delete contact id
+            // todo: check
+            // Delete contact id
+        }
 
 
         [HttpDelete("{id}")]         //id = username (!)

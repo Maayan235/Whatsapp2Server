@@ -80,10 +80,19 @@ namespace Whatsapp2Server.Services
 /*            User  bdika = user.Contacts.FirstOrDefault(x => x.UserName == contactname);
 */        }
 
-        /*public bool Create()
+        public User2 Create(User2 user)
         {
-            return users.FirstOrDefault(x => x.Id == id);
-        }*/
+            if (users.FirstOrDefault(x=> x.id == user.id) != null)
+            {
+                return null;
+            }
+            User2 newUser = new User2();
+            newUser.id = user.id;   
+            newUser.server = "5286";
+            newUser.name = user.name;
+            newUser.password = user.password;
+            return newUser;
+        }
 
     }
 }

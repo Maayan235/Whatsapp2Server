@@ -29,6 +29,7 @@ namespace Whatsapp2Server.Controllers
     [Route("[controller]")]
     public class apiController : Controller
     {
+        private readonly ContactsApiService _contactservice;
         private static readonly HttpClient client = new HttpClient();
         private readonly UsersApiService _service;
         public IConfiguration _configuration;
@@ -36,6 +37,8 @@ namespace Whatsapp2Server.Controllers
         public apiController(IConfiguration configuration)
         {
             _service = new UsersApiService();
+            _contactservice = new ContactsApiService();
+            
             _configuration = configuration;
         }
         /* [HttpPut("contacts/{id}")]
@@ -47,100 +50,33 @@ namespace Whatsapp2Server.Controllers
          }*/
 
         [HttpPost("transfer")]
-        async public void transfer([Bind("content", "from", "to")] Message message)
+        public IActionResult transfer([Bind("content", "from", "to")] Message message)
         {
-            /*var values = new Dictionary<string, string>
-             {
-                { "content", message.content},
-                 { "from", message.from},
-                { "to", message.to}
-             };*/
-
-            IEnumerable<KeyValuePair<string, string>> queries = new List<KeyValuePair<string, string>>()
+            if(_contactservice.addMessage(message.content, message.to, message.from) == 0)
             {
-                new KeyValuePair<string, string>("content", message.content),
-                new KeyValuePair<string, string>("from", message.from),
-                new KeyValuePair<string, string>("to", message.to)
-
-            };
-            HttpContent q = new FormUrlEncodedContent(queries);
-            using  (HttpClient client = new HttpClient())
-            { 
-                using(HttpResponseMessage response = await client.PostAsync("http://localhost:5286/api/contacts/" + message.to + "/messages", q))
-                { 
-                    using( HttpContent content = response.Content)
-                    {
-                        string myContent = await content.ReadAsStringAsync();
-
-                        HttpContentHeaders headers = content.Headers;
-
-                        Console.WriteLine(myContent);
-                    }
-                    
-                }
+                return Created(string.Format("api/transfer"), message.content);
             }
+            return BadRequest();    
+
         }
         [HttpPost("invitations")]
-        async public void invitations([Bind("sever", "from", "to")] Invitation invitation)
+        public IActionResult invitations([Bind( "from", "to","sever")] Invitation invitation)
         {
-
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://localhost:5286/api/contacts");
-            httpWebRequest.ContentType = "application/json";
-            httpWebRequest.Method = "POST";
-
-            using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+            if(_service.GetUser(invitation.to) == null)
             {
-                string json = "{\"id\":\"" + invitation.from + "\"," +
-                              "\"server\":\"" + invitation.server + "\"," +
-                              "\"name\":\"" + invitation.to + "\", }";
-
-                streamWriter.Write(json);
+                return BadRequest();
             }
-
-            var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-            {
-                var result = streamReader.ReadToEnd();
-            }
-
-
-
-
-
-            /*var values = new Dictionary<string, string>
-             {
-
-                { "id", invitation.from},
-                { "server", invitation.server},
-                { "name", invitation.to} 
-             };
-*/
-            /*IEnumerable<KeyValuePair<string, string>> queries = new List<KeyValuePair<string, string>>()
-            {
-                new KeyValuePair<string, string>("id", invitation.from),
-                new KeyValuePair<string, string>("server", invitation.server),
-                new KeyValuePair<string, string>( "name", invitation.to)
-
-            };
-            HttpContent q = new FormUrlEncodedContent(queries);
-            using (HttpClient client = new HttpClient())
-            {
-                using (HttpResponseMessage response = await client.PostAsync("http://localhost:5286/api/contacts/", q))
-                {
-                    using (HttpContent content = response.Content)
-                    {
-                        string myContent = await content.ReadAsStringAsync();
-
-                        HttpContentHeaders headers = content.Headers;
-
-                        Console.WriteLine(myContent);
-                    }
-
-                }
-            }
+            string username = invitation.to;
+            User2 contactToAdd = new User2();
+            contactToAdd.id = invitation.from;
+            contactToAdd.server = invitation.server;
+            contactToAdd.name = invitation.from;
+            _contactservice.addContact(username, contactToAdd);
+            return Created(string.Format("api/transfer"), invitation.to);
         }
-*/
-        }
+
+
+
         [HttpGet("messages/{contactId}")]
         public IActionResult getChat(string contactId)
         {
@@ -212,8 +148,14 @@ namespace Whatsapp2Server.Controllers
         {
             if (ModelState.IsValid)
             {
-                user.name = "5286";
-                _service.Add(user);
+                
+                User2 newUser = _service.Create(user);
+                if(newUser == null)
+                {
+                    return BadRequest();
+                }
+                _contactservice.createContacts(user.id);
+                _service.Add(newUser);
                 return Created(string.Format("api" + user.id, user.id), user);
             }
             return BadRequest();
