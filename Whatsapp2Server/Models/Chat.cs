@@ -8,13 +8,13 @@ namespace Whatsapp2Server.Models
         public Chat()
         {
             id = 0;
-            contacts = new string[3];
+            contacts = new List<string>();
             messages = new Collection<Message>();
-            lastMessage = new Message();
+            lastMessage = null;
         }
         public int id { get; set; }
 
-        public  string[] contacts { get; set; }
+        public  List<string> contacts { get; set; }
 
         public ICollection<Message> messages { get; set; } 
 
