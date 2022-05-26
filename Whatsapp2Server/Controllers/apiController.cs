@@ -38,7 +38,7 @@ namespace Whatsapp2Server.Controllers
         {
             _service = new UsersApiService();
             _contactservice = new ContactsApiService();
-            
+
             _configuration = configuration;
         }
         /* [HttpPut("contacts/{id}")]
@@ -52,17 +52,17 @@ namespace Whatsapp2Server.Controllers
         [HttpPost("transfer")]
         public IActionResult transfer([Bind("content", "from", "to")] Message message)
         {
-            if(_contactservice.addMessage(message.content, message.to, message.from) == 0)
+            if (_contactservice.addMessage(message.content, message.to, message.from) == 0)
             {
                 return Created(string.Format("api/transfer"), message.content);
             }
-            return NotFound();    
+            return NotFound();
 
         }
         [HttpPost("invitations")]
-        public IActionResult invitations([Bind( "from", "to","sever")] Invitation invitation)
+        public IActionResult invitations([Bind("from", "to", "sever")] Invitation invitation)
         {
-            if(_service.GetUser(invitation.to) == null)
+            if (_service.GetUser(invitation.to) == null)
             {
                 return NotFound();
             }
@@ -90,43 +90,31 @@ namespace Whatsapp2Server.Controllers
         }
 
         // public async Task<IActionResult> Create([Bind("UserName, Password, NickName")] User user)
-/*        [HttpPost("logIn")]
+        [HttpPost("logIn")]
         public IActionResult login([Bind("id")] User2 user)
         {
             if (ModelState.IsValid)
             {
                 User2 loggedIn = _service.GetUser(user.id);
                 //     Post(user.UserName);
-                //Signin(loggedIn);
+                Signin(loggedIn);
                 //_service.Update(user);
 
                 return Created(string.Format("api/logIn", loggedIn.id), loggedIn.id);
             }
             return NotFound();
         }
-*/
-        [HttpPost("logIn")]
-        public async Task<IActionResult> PostAsync([Bind("id")] User2 user)
+
+        [HttpPost("signIn/{username}")]
+        public IActionResult Post(string username)
         {
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, user.id),
                 new Claim(JwtRegisteredClaimNames.Sub, _configuration["JWTParams:Subject"]),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Sub, DateTime.UtcNow.ToString()),
-                new Claim("UserID", user.id)
+                new Claim("UserID", username)
             };
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-            var authProperties = new AuthenticationProperties
-            {
-                //ExpireUtc = DataTimeOffset.UtcNow.AddMinutes(10)
-            };
-
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity),
-                authProperties);
 
             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWTParams:SecretKey"]));
             var mac = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
@@ -160,9 +148,9 @@ namespace Whatsapp2Server.Controllers
         {
             if (ModelState.IsValid)
             {
-                
+
                 User2 newUser = _service.Create(user);
-                if(newUser == null)
+                if (newUser == null)
                 {
                     return NotFound();
                 }
@@ -322,6 +310,5 @@ namespace Whatsapp2Server.Controllers
 
     }
 }
-
 
 

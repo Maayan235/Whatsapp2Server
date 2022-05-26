@@ -13,7 +13,7 @@ builder.Services.AddDbContext<Whatsapp2ServerContext>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-/*builder.Services.AddSession(options =>
+builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(1);
 });
@@ -21,14 +21,14 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-})*/
+})
 .AddCookie(options =>
 {
     options.LoginPath = "/Users/Login/";
     options.AccessDeniedPath = "/Users/AccessDenied/";
 });
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+/*builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.RequireHttpsMetadata = false;
     options.SaveToken = true;
@@ -40,9 +40,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidIssuer = builder.Configuration["JWTParams:Issuer"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTParams:SecretKey"]))
     };
-});
+});*/
 
-builder.Services.AddCors(options =>
+/*builder.Services.AddCors(options =>
 {
     options.AddPolicy("Allow All",
         builder =>
@@ -53,7 +53,7 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader();
         });
 });
-
+*/
 
 
 
