@@ -22,11 +22,12 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 })
-.AddCookie(options => {
+.AddCookie(options =>
+{
     options.LoginPath = "/Users/Login/";
     options.AccessDeniedPath = "/Users/AccessDenied/";
 });
-/*
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.RequireHttpsMetadata = false;
@@ -39,9 +40,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidIssuer = builder.Configuration["JWTParams:Issuer"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTParams:SecretKey"]))
     };
-});*/
+});
 
-/*builder.Services.AddCors(options =>
+builder.Services.AddCors(options =>
 {
     options.AddPolicy("Allow All",
         builder =>
@@ -52,7 +53,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
             .AllowAnyHeader();
         });
 });
-*/
+
 
 
 var app = builder.Build();
@@ -74,6 +75,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Users}/{action=Search}/{id?}");
+    pattern: "~/index.html");
 
 app.Run();

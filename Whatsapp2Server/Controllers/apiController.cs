@@ -56,31 +56,43 @@ namespace Whatsapp2Server.Controllers
         }
 
         // public async Task<IActionResult> Create([Bind("UserName, Password, NickName")] User user)
-        [HttpPost("logIn")]
+/*        [HttpPost("logIn")]
         public IActionResult login([Bind("id")] User2 user)
         {
             if (ModelState.IsValid)
             {
                 User2 loggedIn = _service.GetUser(user.id);
                 //     Post(user.UserName);
-                Signin(loggedIn);
+                //Signin(loggedIn);
                 //_service.Update(user);
 
                 return Created(string.Format("api/logIn", loggedIn.id), loggedIn.id);
             }
             return BadRequest();
         }
-
-        [HttpPost("signIn/{username}")]
-        public IActionResult Post(string username)
+*/
+        [HttpPost("logIn")]
+        public async Task<IActionResult> PostAsync([Bind("id")] User2 user)
         {
             var claims = new[]
             {
+                new Claim(ClaimTypes.Name, user.id),
                 new Claim(JwtRegisteredClaimNames.Sub, _configuration["JWTParams:Subject"]),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Sub, DateTime.UtcNow.ToString()),
-                new Claim("UserID", username)
+                new Claim("UserID", user.id)
             };
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            var authProperties = new AuthenticationProperties
+            {
+                //ExpireUtc = DataTimeOffset.UtcNow.AddMinutes(10)
+            };
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties);
 
             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWTParams:SecretKey"]));
             var mac = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
