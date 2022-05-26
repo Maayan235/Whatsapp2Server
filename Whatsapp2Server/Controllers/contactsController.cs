@@ -43,21 +43,20 @@ namespace Whatsapp2Server.Controllers
         [HttpGet]
         public IActionResult sendContacts()
         {
-
-            // check cookies ,, get the username of the connected user... (!)
             string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
 
-             ICollection<User2> contacts =  _service.getContacts(username);
-            if(contacts == null)
+             ICollection<User2> myContacts =  _service.getContacts(username);
+            if(myContacts == null)
             {
                 return null;
             }
+            ICollection<Contact> contacts = _service.fromUsersToContacts(myContacts);
             return Json(contacts);
             // }
 
         }
         [HttpGet("{id}/messages")]
-        public IActionResult getMessages(string id)
+        public IActionResult getmessages(string id)
         {
            
             string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
@@ -68,13 +67,28 @@ namespace Whatsapp2Server.Controllers
                 chat2.contacts.Add(username);
                 chat2.contacts.Add(id);
                 _service.addChat(chat2);
-                return Json(chat2);
+                return Json(_service.convertMessages( chat2.messages, username));
             }
                 
+            return Json(_service.convertMessages(chat.messages, username));
+        }
+        [HttpGet("chat/{id}")]
+        public IActionResult getchat(string id)
+        {
+
+            string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+            Chat chat = _service.getChat(username, id);
+            if (chat == null)
+            {
+                Chat chat2 = new Chat();
+                chat2.contacts.Add(username);
+                chat2.contacts.Add(id);
+                _service.addChat(chat2);
+                return Json(chat2);
+            }
+
             return Json(chat);
         }
-
-         
         [HttpPost("{id}/messages")]
         public IActionResult postMessages([Bind("content")] Message message, string id) 
         {
@@ -86,7 +100,7 @@ namespace Whatsapp2Server.Controllers
             }
             _service.addMessageInOther(message.content, username, id);
 
-            return BadRequest();
+            return NotFound();
         }
 
 
@@ -100,24 +114,36 @@ namespace Whatsapp2Server.Controllers
         [HttpPost]
 
         public IActionResult AddContact([Bind("id,server,name")] User2 contact)
-        {   
-
-            
-            if(_usersService.GetUser(contact.id) == null)
-            {
-                return BadRequest();
-            }
-            User2 user = new User2();
-            user.profilePicSrc = "https://www.history.ox.ac.uk/sites/default/files/history/images/person/unknown_9.gif";
-            user.name = contact.name;
-            user.server = contact.server;
-
+        {
             string id = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
-            User2 thisUser = _usersService.GetUser(id);
-            _service.addContact(id, contact);
-            _service.addContactInOther(thisUser, contact.id);
-            return Created(string.Format("api/contacts/", contact.id), contact);
+
+            if (contact.server != "localhost:5286")
+            {
+                User2 user2 = new User2();
+                user2.server = contact.server;
+                user2.id = contact.id;
+                user2.name = contact.name;
+                _service.addContact(id, contact);
+                return Created(string.Format("api/contacts/", contact.id), contact);
+
+            }
+            else
+            {
+                if (_usersService.GetUser(contact.id) == null)
+                {
+                    return NotFound();
+                }
+                User2 user = new User2();
+                user.name = contact.name;
+                user.server = contact.server;
+                User2 thisUser = _usersService.GetUser(id);
+                _service.addContact(id, contact);
+                _service.addContactInOther(thisUser, contact.id);
+                return Created(string.Format("api/contacts/", contact.id), contact);
+            }
         }
+
+
 
         /* [HttpDelete("contacts3/{id}")]
          public IActionResult deleteContact(string id)
@@ -129,7 +155,7 @@ namespace Whatsapp2Server.Controllers
 
 
         [HttpGet("{id}")]         //id = username (!)
-        [Authorize]
+        
         public IActionResult getSpecificContact(string id)
         {
             var thisUserName = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
@@ -140,14 +166,14 @@ namespace Whatsapp2Server.Controllers
                 User2 contact = myContacts.FirstOrDefault(x => x.id == id);
                 if ( contact != null && contact.id == id)
                 {
-                    return Json(contact);
+                    return Json(_service.fromUserToContact( contact));
                 }
                 else
                 {
-                    return BadRequest();
+                    return NotFound();
                 }
             }
-            return BadRequest();
+            return NotFound();
         }
 
         // todo: change
@@ -172,10 +198,10 @@ namespace Whatsapp2Server.Controllers
                 }
                 else
                 {
-                    return BadRequest();
+                    return NotFound();
                 }
             }
-            return BadRequest();
+            return NotFound();
         }
 
         [HttpGet("{id}/messages/{id2}")]
@@ -184,8 +210,8 @@ namespace Whatsapp2Server.Controllers
             var thisUserName = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
             Message message = _service.getSpecificMessage(thisUserName, id, id2);
             if (message == null)
-                return BadRequest();
-            return Json(message);
+                return NotFound();
+            return Json(_service.convertMessage( message, thisUserName));
         }
         [HttpPut("{id}/messages/{id2}")]
         public IActionResult EditSpecificMessage([Bind("content")] Message message, string id, int id2)
@@ -194,7 +220,7 @@ namespace Whatsapp2Server.Controllers
             Message thisMessage = _service.getSpecificMessage(thisUserName, id, id2);
             if (thisMessage == null)
             {
-                return BadRequest();
+                return NotFound();
             }
             thisMessage.content = message.content;
             return Ok();
@@ -210,7 +236,7 @@ namespace Whatsapp2Server.Controllers
             Message thisMessage = _service.getSpecificMessage(thisUserName, id, id2);
             if (thisMessage == null)
             {
-                return BadRequest();
+                return NotFound();
             }
             chat.messages.Remove(thisMessage);
             return Ok();

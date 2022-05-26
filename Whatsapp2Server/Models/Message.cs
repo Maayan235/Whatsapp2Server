@@ -9,7 +9,7 @@ public Message()
             id = currentId;
             currentId++;
             this.content = "";
-            this.time = DateTime.Now;
+            this.time = DateTime.UtcNow;
             this.fromMe = false;
             this.from = "";
             this.to = "";

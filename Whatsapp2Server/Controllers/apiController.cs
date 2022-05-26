@@ -56,7 +56,7 @@ namespace Whatsapp2Server.Controllers
             {
                 return Created(string.Format("api/transfer"), message.content);
             }
-            return BadRequest();    
+            return NotFound();    
 
         }
         [HttpPost("invitations")]
@@ -64,7 +64,7 @@ namespace Whatsapp2Server.Controllers
         {
             if(_service.GetUser(invitation.to) == null)
             {
-                return BadRequest();
+                return NotFound();
             }
             string username = invitation.to;
             User2 contactToAdd = new User2();
@@ -102,7 +102,7 @@ namespace Whatsapp2Server.Controllers
 
                 return Created(string.Format("api/logIn", loggedIn.id), loggedIn.id);
             }
-            return BadRequest();
+            return NotFound();
         }
 
         [HttpPost("signIn/{username}")]
@@ -152,13 +152,13 @@ namespace Whatsapp2Server.Controllers
                 User2 newUser = _service.Create(user);
                 if(newUser == null)
                 {
-                    return BadRequest();
+                    return NotFound();
                 }
                 _contactservice.createContacts(user.id);
                 _service.Add(newUser);
                 return Created(string.Format("api" + user.id, user.id), user);
             }
-            return BadRequest();
+            return NotFound();
         }
 
 

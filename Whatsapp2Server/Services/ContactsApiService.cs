@@ -14,18 +14,20 @@ namespace Whatsapp2Server.Services
             if (contactsList.Count == 0)
             {
                 Message m1 = new Message() { id = -1, fromMe = true, content = "hiiii", from = "Maayan", to = "Yarin", time = DateTime.Now };
-                User2 user = new User2() { id = "Yarin", server = "5286", name = "Yerin", password = "123456", profilePicSrc = "" };
+                User2 user = new User2() { id = "Yarin", server = "localhost:5286", name = "Yerin", password = "123456", profilePicSrc = "" };
 
-                User2 defUser2 = new User2() { id = "Maayan", server = "5286", name = "satla", password = "123456", profilePicSrc = "", lastMessage = m1 };
+                User2 defUser2 = new User2() { id = "Maayan", server = "localhost:5286", name = "satla", password = "123456", profilePicSrc = "", lastMessage = m1 };
 
-                User2 defUser3 = new User2() { id = "Avital", server = "5286", name = "vita", password = "123456", profilePicSrc = "" };
+                User2 defUser3 = new User2() { id = "Avital", server = "localhost:5286", name = "vita", password = "123456", profilePicSrc = "" };
 
-                Contacts contact = new Contacts() { id = "Yarin", contacts = new Collection<User2>() { (defUser2) } };
+                Contacts contact = new Contacts() { id = "Yarin", contacts = new Collection<User2>() { (defUser2),(defUser3) } };
 
                 Contacts contact2 = new Contacts() { id = "Maayan", contacts = new Collection<User2>() { (user) } };
+                Contacts contact3 = new Contacts() { id = "Avital", contacts = new Collection<User2>()  };
 
                 contactsList.Add(contact);
                 contactsList.Add(contact2);
+                contactsList.Add(contact3);
                 Chat chat = new Chat();
                 chat.lastMessage = m1;
                 chat.contacts.Add("Yarin");
@@ -35,7 +37,7 @@ namespace Whatsapp2Server.Services
 
             }
         }
-
+        
         public Chat getChat(string id1, string id2)
         {
 
@@ -56,12 +58,17 @@ namespace Whatsapp2Server.Services
             contactsList.Add(contacts);
         }
         public void addContactInOther(User2 user , string id2)
-        {
+        {   
+
             User2 contact = new User2();
             contact.id = user.id;
             contact.name = user.name;
             contact.server = user.server;
-            contactsList.FirstOrDefault(x => x.id == id2).contacts.Add(contact);
+            ICollection <User2> id2Contacts = contactsList.FirstOrDefault(x => x.id == id2).contacts;
+            if(id2Contacts.FirstOrDefault(x=>x.id == user.id) == null)
+            {
+                id2Contacts.Add(user);
+            }
         }
         public ICollection<User2> getContacts(string id)
         {
@@ -106,7 +113,7 @@ namespace Whatsapp2Server.Services
             chat.lastMessage = message;
             myContact.lastMessage = message;
             myContact.last = message.content;
-            myContact.lastdate = message.time;
+            myContact.lastdate = message.time.ToString();
             return 0;
         }
 
@@ -124,21 +131,11 @@ namespace Whatsapp2Server.Services
                 message.content = content;
                 myContact.lastMessage = message;
                 myContact.last = message.content;
-                myContact.lastdate = message.time;
+                myContact.lastdate = message.time.ToString();
                 return 0;
             }
-                
-                /*
 
-            Chat chat = _service.getChat(username, id);
-           
-            chat.messages.Add(message);
-            chat.lastMessage = message;
-            myContact.lastMessage = message;
-            myContact.last = message.content;
-            myContact.lastdate = message.time;*/
 
-        
         public void addContact(string id, User2 contact)
         {
             Contacts myContacts = contactsList.FirstOrDefault(x => x.id == id);
@@ -156,6 +153,50 @@ namespace Whatsapp2Server.Services
         {
             chats.Add(chat);
         }
-        
+        public Contact fromUserToContact(User2 user)
+        {
+            Contact contact = new Contact();
+            contact.id = user.id;
+            contact.name = user.name;
+            contact.server = user.server;
+            contact.last = user.last;
+            contact.lastdate = user.lastdate;
+            return contact;
+        }
+        public ICollection<Contact> fromUsersToContacts(ICollection<User2> contactsList)
+        {
+            ICollection<Contact> contacts = new Collection<Contact>();
+            foreach (User2 contact in contactsList)
+            {
+                contacts.Add(fromUserToContact(contact));
+            }
+            return contacts;
+        }
+
+        public MessageRet convertMessage(Message oldMessage, string id)
+        {
+            MessageRet message = new MessageRet();
+            message.id = oldMessage.id;
+            message.created = oldMessage.time;
+            message.content = oldMessage.content;
+            if(oldMessage.from == id)
+            {
+                message.sent = true;
+            }
+            return message;
+
+        }
+        public ICollection<MessageRet> convertMessages(ICollection<Message> oldMessages, string id)
+        {
+            ICollection < MessageRet > messages = new Collection<MessageRet>();
+            foreach (Message oldMessage in oldMessages)
+            {
+                messages.Add(convertMessage(oldMessage, id));
+            }
+            return messages;
+        }
+
+
+
     }
 }

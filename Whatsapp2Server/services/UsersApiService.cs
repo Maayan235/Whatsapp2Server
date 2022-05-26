@@ -12,9 +12,9 @@ namespace Whatsapp2Server.Services
         {
             if (users.Count == 0)
             {
-                User2 user = new User2() {id = "Yarin", server = "5286", name = "Yerin", password = "123456", profilePicSrc = "" };
-                User2 defUser2 = new User2() { id = "Maayan", server = "5286", name = "satla", password = "123456", profilePicSrc = "" };
-                User2 defUser3 = new User2() { id = "Avital", server = "5286", name = "vita", password = "123456", profilePicSrc = "" };
+                User2 user = new User2() {id = "Yarin", server = "localhost:5286", name = "Yerin", password = "123456", profilePicSrc = "" };
+                User2 defUser2 = new User2() { id = "Maayan", server = "localhost:5286", name = "satla", password = "123456", profilePicSrc = "" };
+                User2 defUser3 = new User2() { id = "Avital", server = "localhost:5286", name = "vita", password = "123456", profilePicSrc = "" };
                 users.Add(user);
                 users.Add(defUser2);
                 users.Add(defUser3);
