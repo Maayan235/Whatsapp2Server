@@ -24,11 +24,13 @@ namespace Whatsapp2Server.Controllers
     public class contatsController : Controller
     {
         private readonly ContactsApiService _service;
+        private readonly UsersApiService _usersService;
         public IConfiguration _configuration;
 
         public contatsController(IConfiguration configuration)
         {
             _service = new ContactsApiService();
+            _usersService = new UsersApiService();
             _configuration = configuration;
         }
        
@@ -41,41 +43,107 @@ namespace Whatsapp2Server.Controllers
         [HttpGet]
         public IActionResult sendContacts()
         {
-
-            // check cookies ,, get the username of the connected user... (!)
             string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
 
-            return Json(_service.getContacts(username));
+             ICollection<User2> myContacts =  _service.getContacts(username);
+            if(myContacts == null)
+            {
+                return null;
+            }
+            ICollection<Contact> contacts = _service.fromUsersToContacts(myContacts);
+            return Json(contacts);
             // }
 
         }
         [HttpGet("{id}/messages")]
-        public IActionResult getMessages(string id)
+        public IActionResult getmessages(string id)
         {
+           
             string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
             Chat chat = _service.getChat(username, id);
             if (chat == null)
-                return BadRequest();
-            return Json(chat.messages);
+            {
+                Chat chat2= new Chat();
+                chat2.contacts.Add(username);
+                chat2.contacts.Add(id);
+                _service.addChat(chat2);
+                return Json(_service.convertMessages( chat2.messages, username));
+            }
+                
+            return Json(_service.convertMessages(chat.messages, username));
         }
+        [HttpGet("chat/{id}")]
+        public IActionResult getchat(string id)
+        {
 
+            string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+            Chat chat = _service.getChat(username, id);
+            if (chat == null)
+            {
+                Chat chat2 = new Chat();
+                chat2.contacts.Add(username);
+                chat2.contacts.Add(id);
+                _service.addChat(chat2);
+                return Json(chat2);
+            }
 
-        /*[HttpPost("{id}/messages")]
+            return Json(chat);
+        }
+        [HttpPost("{id}/messages")]
         public IActionResult postMessages([Bind("content")] Message message, string id) 
         {
             string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
-            Chat chat = _service.getChat(username, id);
-        }*/
+            if(_service.addMessage(message.content, username, id) == 0)
+            {
+                return Created(string.Format("api/contacts/", id + "messages"), id);
 
+            }
+            _service.addMessageInOther(message.content, username, id);
+
+            return NotFound();
+        }
+
+
+        [HttpGet("{id}/lastMessage")]
+        public IActionResult lastMessage(string id)
+        {
+            string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+            User2 myContact = _service.getContacts(username).FirstOrDefault(x => x.id == id);
+            return Json(myContact.lastMessage);
+        }
         [HttpPost]
 
         public IActionResult AddContact([Bind("id,server,name")] User2 contact)
         {
-            User2 copyContact = new User2() { id = contact.id, name = contact.name, server = contact.server };
             string id = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
-            _service.addContact(id, copyContact);
-            return Created(string.Format("api/contacts/", contact.id), contact);
+
+            if (contact.server != "localhost:5286")
+            {
+                User2 user2 = new User2();
+                user2.server = contact.server;
+                user2.id = contact.id;
+                user2.name = contact.name;
+                _service.addContact(id, contact);
+                return Created(string.Format("api/contacts/", contact.id), contact);
+
+            }
+            else
+            {
+                if (_usersService.GetUser(contact.id) == null)
+                {
+                    return NotFound();
+                }
+                User2 user = new User2();
+                user.name = contact.name;
+                user.server = contact.server;
+                User2 thisUser = _usersService.GetUser(id);
+                _service.addContact(id, contact);
+                _service.addContactInOther(thisUser, contact.id);
+                return Created(string.Format("api/contacts/", contact.id), contact);
+            }
         }
+
+
 
         /* [HttpDelete("contacts3/{id}")]
          public IActionResult deleteContact(string id)
@@ -87,7 +155,7 @@ namespace Whatsapp2Server.Controllers
 
 
         [HttpGet("{id}")]         //id = username (!)
-        [Authorize]
+        
         public IActionResult getSpecificContact(string id)
         {
             var thisUserName = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
@@ -96,16 +164,16 @@ namespace Whatsapp2Server.Controllers
             if (myContacts.Count > 0)
             {
                 User2 contact = myContacts.FirstOrDefault(x => x.id == id);
-                if (contact.id == id)
+                if ( contact != null && contact.id == id)
                 {
-                    return Json(contact);
+                    return Json(_service.fromUserToContact( contact));
                 }
                 else
                 {
-                    return BadRequest();
+                    return NotFound();
                 }
             }
-            return BadRequest();
+            return NotFound();
         }
 
         // todo: change
@@ -130,16 +198,52 @@ namespace Whatsapp2Server.Controllers
                 }
                 else
                 {
-                    return BadRequest();
+                    return NotFound();
                 }
             }
-            return BadRequest();
+            return NotFound();
         }
 
+        [HttpGet("{id}/messages/{id2}")]
+        public IActionResult getSpecificMessage(string id, int id2)
+        {
+            var thisUserName = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+            Message message = _service.getSpecificMessage(thisUserName, id, id2);
+            if (message == null)
+                return NotFound();
+            return Json(_service.convertMessage( message, thisUserName));
+        }
+        [HttpPut("{id}/messages/{id2}")]
+        public IActionResult EditSpecificMessage([Bind("content")] Message message, string id, int id2)
+        {
+            var thisUserName = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+            Message thisMessage = _service.getSpecificMessage(thisUserName, id, id2);
+            if (thisMessage == null)
+            {
+                return NotFound();
+            }
+            thisMessage.content = message.content;
+            return Ok();
 
+            // todo: check
+            // Delete contact id
+        }
+        [HttpDelete("{id}/messages/{id2}")]
+        public IActionResult DeleteSpecificMessage(string id, int id2)
+        {
+            var thisUserName = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+            Chat chat = _service.getChat(thisUserName, id);
+            Message thisMessage = _service.getSpecificMessage(thisUserName, id, id2);
+            if (thisMessage == null)
+            {
+                return NotFound();
+            }
+            chat.messages.Remove(thisMessage);
+            return Ok();
 
-        // todo: check
-        // Delete contact id
+            // todo: check
+            // Delete contact id
+        }
 
 
         [HttpDelete("{id}")]         //id = username (!)

@@ -12,26 +12,27 @@ namespace Whatsapp2Server.Services
         {
             if (users.Count == 0)
             {
-                User2 user = new User2() {id = "Yarin", server = "5286", name = "Yerin", password = "123456", profilePicSrc = "" };
-                User2 defUser2 = new User2() { id = "Maayan", server = "5286", name = "satla", password = "123456", profilePicSrc = "" };
-                User2 defUser3 = new User2() { id = "Avital", server = "5286", name = "vita", password = "123456", profilePicSrc = "" };
+                User2 user = new User2() {id = "Yarin", server = "localhost:5286", name = "Yerin", password = "123456", profilePicSrc = "" };
+                User2 defUser2 = new User2() { id = "Maayan", server = "localhost:5286", name = "satla", password = "123456", profilePicSrc = "" };
+                User2 defUser3 = new User2() { id = "Avital", server = "localhost:5286", name = "vita", password = "123456", profilePicSrc = "" };
                 users.Add(user);
                 users.Add(defUser2);
                 users.Add(defUser3);
-                Message m1 = new Message() {id = -1, fromMe = true, content = "hiiiiiii", senderId = "Yarin", time = DateTime.Now };
+                Message m1 = new Message() {id = -1, fromMe = true, content = "hiiiiiii", from = "Yarin", time = DateTime.Now };
                 Chat chat = new Chat();
-                chat.contacts[0] = "Yarin";
-                chat.contacts[1] = "Maayan";
+                chat.contacts.Add( "Yarin");
+                chat.contacts.Add ( "Maayan");
                 chat.messages.Add(m1);
                 user.chats.Add(chat);
                 AddToContacts(user.id, defUser2);
             }
         }
+        
         public Chat getChat(string username, string contactName)
         {
             User2 user = GetUser(username);
             User2 contact = GetUser(contactName);
-            Chat chat =user.chats.FirstOrDefault(x => Array.Exists( x.contacts,element => element == user.id) && Array.Exists(x.contacts, element => element == contact.id));
+            Chat chat =user.chats.FirstOrDefault(x => x.contacts.Contains(user.id)&& x.contacts.Contains( contact.id));
             return chat;
         }
         public void editContact(User2 contact)
@@ -79,10 +80,19 @@ namespace Whatsapp2Server.Services
 /*            User  bdika = user.Contacts.FirstOrDefault(x => x.UserName == contactname);
 */        }
 
-        /*public bool Create()
+        public User2 Create(User2 user)
         {
-            return users.FirstOrDefault(x => x.Id == id);
-        }*/
+            if (users.FirstOrDefault(x=> x.id == user.id) != null)
+            {
+                return null;
+            }
+            User2 newUser = new User2();
+            newUser.id = user.id;   
+            newUser.server = "5286";
+            newUser.name = user.name;
+            newUser.password = user.password;
+            return newUser;
+        }
 
     }
 }

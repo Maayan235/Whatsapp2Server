@@ -17,6 +17,9 @@ using Microsoft.IdentityModel.Tokens;
 using Whatsapp2Server.Data;
 using Whatsapp2Server.Models;
 using Whatsapp2Server.Services;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net;
 
 namespace Whatsapp2Server.Controllers
 {
@@ -26,12 +29,16 @@ namespace Whatsapp2Server.Controllers
     [Route("[controller]")]
     public class apiController : Controller
     {
+        private readonly ContactsApiService _contactservice;
+        private static readonly HttpClient client = new HttpClient();
         private readonly UsersApiService _service;
         public IConfiguration _configuration;
 
         public apiController(IConfiguration configuration)
         {
             _service = new UsersApiService();
+            _contactservice = new ContactsApiService();
+            
             _configuration = configuration;
         }
         /* [HttpPut("contacts/{id}")]
@@ -41,6 +48,33 @@ namespace Whatsapp2Server.Controllers
              _service.editContact(contact);
              return NoContent();
          }*/
+
+        [HttpPost("transfer")]
+        public IActionResult transfer([Bind("content", "from", "to")] Message message)
+        {
+            if(_contactservice.addMessage(message.content, message.to, message.from) == 0)
+            {
+                return Created(string.Format("api/transfer"), message.content);
+            }
+            return NotFound();    
+
+        }
+        [HttpPost("invitations")]
+        public IActionResult invitations([Bind( "from", "to","sever")] Invitation invitation)
+        {
+            if(_service.GetUser(invitation.to) == null)
+            {
+                return NotFound();
+            }
+            string username = invitation.to;
+            User2 contactToAdd = new User2();
+            contactToAdd.id = invitation.from;
+            contactToAdd.server = invitation.server;
+            contactToAdd.name = invitation.from;
+            _contactservice.addContact(username, contactToAdd);
+            return Created(string.Format("api/transfer"), invitation.to);
+        }
+
 
 
         [HttpGet("messages/{contactId}")]
@@ -68,7 +102,7 @@ namespace Whatsapp2Server.Controllers
 
                 return Created(string.Format("api/logIn", loggedIn.id), loggedIn.id);
             }
-            return BadRequest();
+            return NotFound();
         }
 */
         [HttpPost("logIn")]
@@ -126,11 +160,17 @@ namespace Whatsapp2Server.Controllers
         {
             if (ModelState.IsValid)
             {
-                user.name = "5286";
-                _service.Add(user);
+                
+                User2 newUser = _service.Create(user);
+                if(newUser == null)
+                {
+                    return NotFound();
+                }
+                _contactservice.createContacts(user.id);
+                _service.Add(newUser);
                 return Created(string.Format("api" + user.id, user.id), user);
             }
-            return BadRequest();
+            return NotFound();
         }
 
 

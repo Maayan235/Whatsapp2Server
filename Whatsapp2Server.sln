@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Whatsapp2Server", "Whatsapp2Server\Whatsapp2Server.csproj", "{69350840-2938-45C4-B0D8-F3CB7E0DD992}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Whatsapp2Server", "Whatsapp2Server\Whatsapp2Server.csproj", "{69350840-2938-45C4-B0D8-F3CB7E0DD992}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "chatAppRatings", "..\‏‏chatAppRatings2\chatAppRatings\chatAppRatings.csproj", "{56DCF85F-BDFA-4D9B-878B-82D5D3E7FEAC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{69350840-2938-45C4-B0D8-F3CB7E0DD992}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69350840-2938-45C4-B0D8-F3CB7E0DD992}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69350840-2938-45C4-B0D8-F3CB7E0DD992}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56DCF85F-BDFA-4D9B-878B-82D5D3E7FEAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56DCF85F-BDFA-4D9B-878B-82D5D3E7FEAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56DCF85F-BDFA-4D9B-878B-82D5D3E7FEAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56DCF85F-BDFA-4D9B-878B-82D5D3E7FEAC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
