@@ -19,6 +19,7 @@ using Whatsapp2Server.Services;
 
 namespace Whatsapp2Server.Controllers
 {
+    //[Authorize(AuthenticationSchemes = "Bearer")]
     [ApiController]
     [Route("api/contacts")]
     public class contatsController : Controller
@@ -26,26 +27,37 @@ namespace Whatsapp2Server.Controllers
         private readonly ContactsApiService _service;
         private readonly UsersApiService _usersService;
         public IConfiguration _configuration;
+        public string loggedId;
 
         public contatsController(IConfiguration configuration)
         {
             _service = new ContactsApiService();
             _usersService = new UsersApiService();
             _configuration = configuration;
+            //GetUserId();
+        }
+
+        private async void GetUserId()
+        {
+            var token = await HttpContext.GetTokenAsync("access_token");
+            var handler = new JwtSecurityTokenHandler();
+            var jwt = handler.ReadJwtToken(token);
+            loggedId = jwt.Claims.First(x => x.Type == "UserId").Value;
+
         }
        
-
-
-
         // public async Task<IActionResult> Create([Bind("UserName, Password, NickName")] User user)
 
 
         [HttpGet]
         public IActionResult sendContacts()
         {
+            //string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+
             string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
 
-             ICollection<User2> myContacts =  _service.getContacts(username);
+
+            ICollection<User2> myContacts =  _service.getContacts(username);
             if(myContacts == null)
             {
                 return null;
