@@ -13,7 +13,7 @@ builder.Services.AddDbContext<Whatsapp2ServerContext>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddSession(options =>
+/*builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(1);
 });
@@ -21,7 +21,7 @@ builder.Services.AddSession(options =>
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-})
+})*/
 .AddCookie(options =>
 {
     options.LoginPath = "/Users/Login/";
