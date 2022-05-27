@@ -107,10 +107,10 @@ namespace Whatsapp2Server.Controllers
             string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
             if(_service.addMessage(message.content, username, id) == 0)
             {
+                _service.addMessageInOther(message.content, username, id);
                 return Created(string.Format("api/contacts/", id + "messages"), id);
-
             }
-            _service.addMessageInOther(message.content, username, id);
+            
 
             return NotFound();
         }

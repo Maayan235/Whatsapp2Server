@@ -23,7 +23,7 @@ namespace Whatsapp2Server.Services
                 Contacts contact = new Contacts() { id = "Yarin", contacts = new Collection<User2>() { (defUser2),(defUser3) } };
 
                 Contacts contact2 = new Contacts() { id = "Maayan", contacts = new Collection<User2>() { (user) } };
-                Contacts contact3 = new Contacts() { id = "Avital", contacts = new Collection<User2>()  };
+                Contacts contact3 = new Contacts() { id = "Avital", contacts = new Collection<User2>() { user } };
 
                 contactsList.Add(contact);
                 contactsList.Add(contact2);
