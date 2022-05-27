@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Whatsapp2Server.Models;
 
 namespace Whatsapp2Server.Hubs
 {
@@ -16,10 +17,10 @@ namespace Whatsapp2Server.Hubs
         }
 
 
-        public async Task joinToListeners( string id)
+        public async Task joinToListeners(ChatObject chatObject)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId,id);
-            _chats[Context.ConnectionId] = id;
+            await Groups.AddToGroupAsync(Context.ConnectionId, chatObject.chatMember);
+            _chats[Context.ConnectionId] = chatObject.chatMember;
             /*await Clients.Group(id).SendAsync("ReceiveMessage", content);*/
         }
     }
