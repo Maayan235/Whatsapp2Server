@@ -1,4 +1,4 @@
-# Whatsapp2Server
+# Whatsapp2Server - in ex2y branch
 
 **IMPORTANT! our project for ex2 is in ex2y branch!
 **
