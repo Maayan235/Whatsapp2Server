@@ -1,5 +1,7 @@
 # Whatsapp2Server
 
+**IMPORTANT! our project for ex2 is in ex2y branch!
+**
 
 first Project Github name: Whatsapp2Server
 Link to our github branch: https://github.com/Maayan235/Whatsapp2Server/tree/ex2y
