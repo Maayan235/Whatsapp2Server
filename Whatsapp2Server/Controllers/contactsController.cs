@@ -37,6 +37,8 @@ namespace Whatsapp2Server.Controllers
             //GetUserId();
         }
 
+
+
         private async void GetUserId()
         {
             var token = await HttpContext.GetTokenAsync("access_token");
@@ -50,11 +52,11 @@ namespace Whatsapp2Server.Controllers
 
 
         [HttpGet]
-        public IActionResult sendContacts()
-        {
+        public IEnumerable<User2> sendContacts()
+        /*{
             //string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
 
-            string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+            //string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
 
 
             ICollection<User2> myContacts =  _service.getContacts(username);
@@ -66,8 +68,26 @@ namespace Whatsapp2Server.Controllers
             return Json(contacts);
             // }
 
-        }
-        [HttpGet("{id}/messages")]
+        }*/
+
+        {
+            //string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+
+            //string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+
+
+            ICollection<User2> myContacts = _service.getContacts2();
+            if(myContacts == null)
+            {
+                return null;
+            }
+           // ICollection<Contact> contacts = _service.fromUsersToContacts(myContacts);
+            return myContacts;
+        // }
+
+    }
+
+    [HttpGet("{id}/messages")]
         public IActionResult getmessages(string id)
         {
            

@@ -17,13 +17,13 @@ namespace Whatsapp2Server.Models
             profilePicSrc = "https://www.history.ox.ac.uk/sites/default/files/history/images/person/unknown_9.gif";
             last =null;
             lastdate = null;
-            
+            message = "";
             lastMessage = null;
         }
-         
+
         //[Required]
-       // public int Id { get; set; }
-        
+        // public int Id { get; set; }
+        public string message { get; set; }
         public string id { get; set; }
 /*        [Required] 
 */        [DataType(DataType.Password)]

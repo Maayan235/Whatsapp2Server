@@ -9,6 +9,9 @@ namespace Whatsapp2Server.Services
         private static ICollection<Chat> chats = new List<Chat>();
 
 
+
+        private static Contacts con;
+
         public ContactsApiService()
         {
             if (contactsList.Count == 0)
@@ -16,14 +19,17 @@ namespace Whatsapp2Server.Services
                 Message m1 = new Message() { id = -1, fromMe = true, content = "hiiii", from = "Maayan", to = "Yarin", time = DateTime.Now };
                 User2 user = new User2() { id = "Yarin", server = "localhost:5286", name = "Yerin", password = "123456", profilePicSrc = "" };
 
-                User2 defUser2 = new User2() { id = "Maayan", server = "localhost:5286", name = "satla", password = "123456", profilePicSrc = "", lastMessage = m1 };
+                User2 defUser2 = new User2() { id = "Maayan", server = "localhost:5600", name = "satla", message = "hola", lastdate = "now lol" };
 
-                User2 defUser3 = new User2() { id = "Avital", server = "localhost:5286", name = "vita", password = "123456", profilePicSrc = "" };
+                User2 defUser3 = new User2() { id = "Avital", server = "localhost:5286", name = "vita", message = "hi", lastdate = "nonw lol.." };
 
                 Contacts contact = new Contacts() { id = "Yarin", contacts = new Collection<User2>() { (defUser2),(defUser3) } };
 
                 Contacts contact2 = new Contacts() { id = "Maayan", contacts = new Collection<User2>() { (user) } };
                 Contacts contact3 = new Contacts() { id = "Avital", contacts = new Collection<User2>() { user } };
+
+
+                con = contact;
 
                 contactsList.Add(contact);
                 contactsList.Add(contact2);
@@ -34,6 +40,7 @@ namespace Whatsapp2Server.Services
                 chat.contacts.Add("Maayan");
                 chat.messages.Add(m1);
                 chats.Add(chat);
+
 
             }
         }
@@ -78,6 +85,11 @@ namespace Whatsapp2Server.Services
                 return null;
             }
             return myContacts.contacts;
+        }
+        public ICollection<User2> getContacts2()
+        {
+
+            return con.contacts;
         }
 
         public Message getSpecificMessage(string thisUserId,string contactId,int messageId)
