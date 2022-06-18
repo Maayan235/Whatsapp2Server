@@ -13,11 +13,10 @@ public Message()
             this.fromMe = false;
             this.from = "";
             this.to = "";
-            this.chat = null;
-            this.server = "";
+            
 
         }
-        public string server { get; set; }
+
         public string to { get; set; }
         public int id { get; set; }
         public string content { get; set; }
@@ -25,7 +24,6 @@ public Message()
         public bool fromMe { get; set; }
 
         public string from { get; set; }
-        public Chat chat{ get; set; } 
     
     }
 }
