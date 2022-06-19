@@ -16,7 +16,9 @@ namespace Whatsapp2Server.Services
         {
             if (contactsList.Count == 0)
             {
-                Message m1 = new Message() { id = -1, fromMe = true, content = "hiiii", from = "Maayan", to = "Yarin", time = DateTime.Now };
+                Message m1 = new Message() { id = -1, fromMe = true, content = "hiiii", from = "Yarin", to = "Maayan", time = DateTime.Now };
+                Message m2 = new Message() { id = -2, fromMe = false, content = "hi you", from = "Maayan", to = "Yarin", time = DateTime.Now };
+
                 User2 user = new User2() { id = "Yarin", server = "localhost:5286", name = "Yerin", password = "123456", profilePicSrc = "" };
 
                 User2 defUser2 = new User2() { id = "Maayan", server = "localhost:5600", name = "satla", message = "hola", lastdate = "now lol" };
@@ -35,10 +37,11 @@ namespace Whatsapp2Server.Services
                 contactsList.Add(contact2);
                 contactsList.Add(contact3);
                 Chat chat = new Chat();
-                chat.lastMessage = m1;
+                chat.lastMessage = m2;
                 chat.contacts.Add("Yarin");
                 chat.contacts.Add("Maayan");
                 chat.messages.Add(m1);
+                chat.messages.Add(m2);
                 chats.Add(chat);
 
 

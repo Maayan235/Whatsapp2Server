@@ -130,8 +130,8 @@ namespace Whatsapp2Server.Controllers
 
         // GET: Users
         //[EnableCors("AnotherPolicy")]
-        [HttpGet("getUser/{username}")]
-        public async Task<IActionResult> getUser(string username)
+        [HttpGet("login/{username}/{password}")]
+        /*public async Task<IActionResult> getUser(string username)
         {
             User2 user = _service.GetUser(username);
             if (user != null)
@@ -140,9 +140,42 @@ namespace Whatsapp2Server.Controllers
             }
             User2 defUser = new User2() { id = "", name = "0", password = "0", profilePicSrc = "0" };
             return Json(defUser);
+        }*/
+
+
+      /*  public async Task<IActionResult> getUser(string username)
+        {
+            User2 user = _service.GetUser(username);
+            if (user != null)
+            {
+                return Json(new User2() { id = user.id, password = user.password });
+            }
+            User2 defUser = new User2() { id = "", name = "0", password = "0", profilePicSrc = "0" };
+            return Json(defUser);
+        }*/
+
+
+
+        public User2 getUser1(string username, string password)
+        {
+            User2 user = _service.GetUser(username);
+            if (user != null)
+            {
+                if(user.password == password)
+                {
+                    return new User2() { id = user.id, password = user.password, name = user.name };
+                }  
+            }
+            //User2 defUser = new User2() { id = "", name = "0", password = "0", profilePicSrc = "0" };
+            return null;
         }
 
-        [HttpPost]
+
+
+
+
+
+        [HttpPost("register")]
         // public async Task<IActionResult> Create([Bind("UserName, Password, NickName")] User user)
         public IActionResult Create([Bind("id, password, name")] User2 user)
         {
