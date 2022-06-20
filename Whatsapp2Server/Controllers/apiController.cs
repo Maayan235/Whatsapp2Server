@@ -105,7 +105,7 @@ namespace Whatsapp2Server.Controllers
             return NotFound();
         }
 
-        [HttpPost("signIn/{username}")]
+        [HttpPut("signIn/{username}")]
         public IActionResult Post(string username)
         {
             var claims = new[]
@@ -131,16 +131,21 @@ namespace Whatsapp2Server.Controllers
         // GET: Users
         //[EnableCors("AnotherPolicy")]
         [HttpGet("login/{username}/{password}")]
-        /*public async Task<IActionResult> getUser(string username)
+        public Contact getUser(string username, string password)
         {
             User2 user = _service.GetUser(username);
             if (user != null)
             {
-                return Json(new User2() { id = user.id, password = user.password });
+                if(user.password == password)
+                {
+                    //Signin(user);
+                    return _service.convertToContact(user);
+                }
+                
             }
-            User2 defUser = new User2() { id = "", name = "0", password = "0", profilePicSrc = "0" };
-            return Json(defUser);
-        }*/
+            //User2 defUser = new User2() { id = "", name = "0", password = "0", profilePicSrc = "0" };
+            return null;
+        }
 
 
       /*  public async Task<IActionResult> getUser(string username)
@@ -168,6 +173,12 @@ namespace Whatsapp2Server.Controllers
             }
             //User2 defUser = new User2() { id = "", name = "0", password = "0", profilePicSrc = "0" };
             return null;
+        }
+
+        [HttpPost("token")]
+        public void createToken([Bind("id, token")] Token token)
+        {
+            _service.setToken(token);
         }
 
 

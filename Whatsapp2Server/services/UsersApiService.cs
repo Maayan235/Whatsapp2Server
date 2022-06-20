@@ -43,6 +43,11 @@ namespace Whatsapp2Server.Services
             Console.WriteLine("hi");
 
         }
+        public void setToken (Token token)
+        {
+            User2 user = users.FirstOrDefault(x => x.id == token.id);
+            user.token = token.token;
+        }
         public void deleteContact(User2 thisUser, string contactId)
         {
             User2 contact = thisUser.contacts.FirstOrDefault(x => x.id == contactId);
@@ -92,6 +97,15 @@ namespace Whatsapp2Server.Services
             newUser.name = user.name;
             newUser.password = user.password;
             return newUser;
+        }
+        public Contact convertToContact(User2 user)
+        {
+            Contact contact = new Contact();
+            contact.id = user.id;
+            contact.server = user.server;
+            contact.name = user.name;
+            //contact.prifilePicSrc = user.profilePicSrc;
+            return contact;
         }
 
     }

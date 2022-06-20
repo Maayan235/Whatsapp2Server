@@ -52,12 +52,12 @@ namespace Whatsapp2Server.Controllers
 
 
         [HttpGet]
-        public IEnumerable<User2> sendContacts()
-        /*{
+        public IEnumerable<Contact> sendContacts()
+        {
             //string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
 
             //string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
-
+            string username = "Yarin";
 
             ICollection<User2> myContacts =  _service.getContacts(username);
             if(myContacts == null)
@@ -65,12 +65,12 @@ namespace Whatsapp2Server.Controllers
                 return null;
             }
             ICollection<Contact> contacts = _service.fromUsersToContacts(myContacts);
-            return Json(contacts);
+            return (contacts);
             // }
 
-        }*/
+        }
 
-        {
+       /* {
             //string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
 
             //string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
@@ -83,9 +83,9 @@ namespace Whatsapp2Server.Controllers
             }
            // ICollection<Contact> contacts = _service.fromUsersToContacts(myContacts);
             return myContacts;
-        // }
+        // }*/
 
-    }
+    
 
     [HttpGet("{id}/messages")]
         public ICollection<MessageRet> getmessages(string id)
@@ -125,8 +125,9 @@ namespace Whatsapp2Server.Controllers
         [HttpPost("{id}/messages")]
         public IActionResult postMessages([Bind("content")] Message message, string id) 
         {
-            string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
-            if(_service.addMessage(message.content, username, id) == 0)
+            //string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+            string username = "Yarin";
+            if (_service.addMessage(message.content, username, id) == 0)
             {
                 _service.addMessageInOther(message.content, username, id);
                 return Created(string.Format("api/contacts/", id + "messages"), id);
@@ -180,45 +181,47 @@ namespace Whatsapp2Server.Controllers
 
         public IActionResult AddContact([Bind("id,server,name")] Contact contact)
         {
-           /*// string id = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
 
+            string id = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+            //string id = "Yarin";
             if (contact.server != "localhost:5286")
             {
                 User2 user2 = new User2();
                 user2.server = contact.server;
                 user2.id = contact.id;
                 user2.name = contact.name;
-                _service.addContact(id, contact);
+                _service.addContact(id, user2);
                 return Created(string.Format("api/contacts/", contact.id), contact);
 
             }
             else
             {
-                if (_usersService.GetUser(contact.id) == null)
+                User2 user = _usersService.GetUser(contact.id);
+                if (user == null)
                 {
                     return NotFound();
                 }
-                User2 user = new User2();
+
                 user.name = contact.name;
                 user.server = contact.server;
+                //user.profilePicSrc = contact.profilePicSrc;
                 User2 thisUser = _usersService.GetUser(id);
-                _service.addContact(id, contact);
-                _service.addContactInOther(thisUser, contact.id);*/
+                _service.addContact(id, user);
+                _service.addContactInOther(thisUser, contact.id);
                 return Created(string.Format("api/contacts/", contact.id), contact);
-            //}
+
+            }
         }
+            /* [HttpDelete("contacts3/{id}")]
+             public IActionResult deleteContact(string id)
+             {
+                 //User2 contact = _service.GetUser(id);
+                 User2 thisUser = _service.GetUser("Yarin");
+                 _service.deleteContact(thisUser, id);
+             }*/
 
-        /* [HttpDelete("contacts3/{id}")]
-         public IActionResult deleteContact(string id)
-         {
-             //User2 contact = _service.GetUser(id);
-             User2 thisUser = _service.GetUser("Yarin");
-             _service.deleteContact(thisUser, id);
-         }*/
-
-
-        [HttpGet("{id}")]         //id = username (!)
         
+        [HttpGet("{id}")]         //id = username (!)
         public IActionResult getSpecificContact(string id)
         {
             var thisUserName = HttpContext.User.FindFirst(ClaimTypes.Name).Value;

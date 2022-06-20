@@ -19,10 +19,12 @@ namespace Whatsapp2Server.Models
             lastdate = null;
             message = "";
             lastMessage = null;
+            token = "";
         }
 
         //[Required]
         // public int Id { get; set; }
+        public string token { get; set; }
         public string message { get; set; }
         public string id { get; set; }
 /*        [Required] 
