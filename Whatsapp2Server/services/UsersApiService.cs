@@ -18,7 +18,7 @@ namespace Whatsapp2Server.Services
                 users.Add(user);
                 users.Add(defUser2);
                 users.Add(defUser3);
-                Message m1 = new Message() {id = -1, fromMe = true, content = "hiiiiiii", from = "Yarin", time = DateTime.Now };
+                Message1 m1 = new Message1() {id = -1, fromMe = true, content = "hiiiiiii", from = "Yarin", time = DateTime.Now };
                 Chat chat = new Chat();
                 chat.contacts.Add( "Yarin");
                 chat.contacts.Add ( "Maayan");
@@ -28,6 +28,10 @@ namespace Whatsapp2Server.Services
             }
         }
         
+        public string getToken(string id)
+        {
+            return users.FirstOrDefault(x => x.id == id).token;
+        }
         public Chat getChat(string username, string contactName)
         {
             User2 user = GetUser(username);

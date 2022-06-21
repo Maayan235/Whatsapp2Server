@@ -7,7 +7,7 @@ namespace Whatsapp2Server.services
         public ICollection<Chat> GetAll();
         public Chat GetChat(User user1,User user2);
 
-        public Message getLastMessage(User user1, User user2);
+        public Message1 getLastMessage(User user1, User user2);
 
         public void Add(Chat chat);
 

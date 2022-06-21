@@ -14,7 +14,7 @@ namespace Whatsapp2Server.Data
         {
         }
 
-        public DbSet<Whatsapp2Server.Models.Message>? Message { get; set; }
+        public DbSet<Whatsapp2Server.Models.Message1>? Message { get; set; }
 
         public DbSet<Whatsapp2Server.Models.User>? User { get; set; }
 

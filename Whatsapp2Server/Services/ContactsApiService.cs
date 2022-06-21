@@ -16,8 +16,8 @@ namespace Whatsapp2Server.Services
         {
             if (contactsList.Count == 0)
             {
-                Message m1 = new Message() { id = -1, fromMe = true, content = "hiiii", from = "Yarin", to = "Maayan", time = DateTime.Now };
-                Message m2 = new Message() { id = -2, fromMe = false, content = "hi you", from = "Maayan", to = "Yarin", time = DateTime.Now };
+                Message1 m1 = new Message1() { id = -1, fromMe = true, content = "hiiii", from = "Yarin", to = "Maayan", time = DateTime.Now };
+                Message1 m2 = new Message1() { id = -2, fromMe = false, content = "hi you", from = "Maayan", to = "Yarin", time = DateTime.Now };
 
                 User2 user = new User2() { id = "Yarin", server = "localhost:5286", name = "Yerin", password = "123456", profilePicSrc = "" };
 
@@ -95,7 +95,7 @@ namespace Whatsapp2Server.Services
             return con.contacts;
         }
 
-        public Message getSpecificMessage(string thisUserId,string contactId,int messageId)
+        public Message1 getSpecificMessage(string thisUserId,string contactId,int messageId)
         {
             
                 Chat chat = getChat(thisUserId, contactId);
@@ -103,7 +103,7 @@ namespace Whatsapp2Server.Services
                 {
                     return null;
                 }
-                Message messsage = chat.messages.FirstOrDefault(x => x.id == messageId);
+                Message1 messsage = chat.messages.FirstOrDefault(x => x.id == messageId);
                 if (messsage == null)
                 {
                     return null;
@@ -120,7 +120,7 @@ namespace Whatsapp2Server.Services
             {
                 return -1;
             }
-            Message message = new Message();
+            Message1 message = new Message1();
             message.from = id1;
             message.to = id2;
             message.content = content;
@@ -140,7 +140,7 @@ namespace Whatsapp2Server.Services
                 {
                     return -1;
                 }
-                Message message = new Message();
+                Message1 message = new Message1();
                 message.from = id1;
                 message.to = id2;
                 message.content = content;
@@ -188,7 +188,7 @@ namespace Whatsapp2Server.Services
             return contacts;
         }
 
-        public MessageRet convertMessage(Message oldMessage, string id)
+        public MessageRet convertMessage(Message1 oldMessage, string id)
         {
             MessageRet message = new MessageRet();
             message.id = oldMessage.id;
@@ -201,10 +201,10 @@ namespace Whatsapp2Server.Services
             return message;
 
         }
-        public ICollection<MessageRet> convertMessages(ICollection<Message> oldMessages, string id)
+        public ICollection<MessageRet> convertMessages(ICollection<Message1> oldMessages, string id)
         {
             ICollection < MessageRet > messages = new Collection<MessageRet>();
-            foreach (Message oldMessage in oldMessages)
+            foreach (Message1 oldMessage in oldMessages)
             {
                 messages.Add(convertMessage(oldMessage, id));
             }

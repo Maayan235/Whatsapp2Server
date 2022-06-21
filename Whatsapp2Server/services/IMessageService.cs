@@ -5,14 +5,14 @@ namespace Whatsapp2Server.services
     public interface IMessageService 
     {
         
-        public ICollection<Message> getAll();
-        public Message GetMessage(int? Id);
+        public ICollection<Message1> getAll();
+        public Message1 GetMessage(int? Id);
 
         public DateTime getDate(int Id);
 
-        public void Add(Message message);
+        public void Add(Message1 message);
 
-        public Message Create(string content, DateTime date, int senderId, Chat chat);
+        public Message1 Create(string content, DateTime date, int senderId, Chat chat);
         
        
     }

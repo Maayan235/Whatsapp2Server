@@ -1,10 +1,10 @@
 ﻿namespace Whatsapp2Server.Models
 {
-    public class Message
+    public class Message1
     {
 
         private static int currentId = 0;
-public Message()
+public Message1()
         {
             id = currentId;
             currentId++;

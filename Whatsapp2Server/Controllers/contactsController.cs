@@ -123,7 +123,7 @@ namespace Whatsapp2Server.Controllers
             return Json(chat);
         }
         [HttpPost("{id}/messages")]
-        public IActionResult postMessages([Bind("content")] Message message, string id) 
+        public IActionResult postMessages([Bind("content")] Message1 message, string id) 
         {
             //string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
             string username = "Yarin";
@@ -182,8 +182,8 @@ namespace Whatsapp2Server.Controllers
         public IActionResult AddContact([Bind("id,server,name")] Contact contact)
         {
 
-            string id = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
-            //string id = "Yarin";
+            //string id = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+            string id = "Yarin";
             if (contact.server != "localhost:5286")
             {
                 User2 user2 = new User2();
@@ -201,11 +201,15 @@ namespace Whatsapp2Server.Controllers
                 {
                     return NotFound();
                 }
-
+                
                 user.name = contact.name;
                 user.server = contact.server;
                 //user.profilePicSrc = contact.profilePicSrc;
                 User2 thisUser = _usersService.GetUser(id);
+                if(thisUser.contacts.FirstOrDefault(x => x.id == contact.id) != null)
+                {
+                    return BadRequest();
+                }
                 _service.addContact(id, user);
                 _service.addContactInOther(thisUser, contact.id);
                 return Created(string.Format("api/contacts/", contact.id), contact);
@@ -274,16 +278,16 @@ namespace Whatsapp2Server.Controllers
         public IActionResult getSpecificMessage(string id, int id2)
         {
             var thisUserName = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
-            Message message = _service.getSpecificMessage(thisUserName, id, id2);
+            Message1 message = _service.getSpecificMessage(thisUserName, id, id2);
             if (message == null)
                 return NotFound();
             return Json(_service.convertMessage( message, thisUserName));
         }
         [HttpPut("{id}/messages/{id2}")]
-        public IActionResult EditSpecificMessage([Bind("content")] Message message, string id, int id2)
+        public IActionResult EditSpecificMessage([Bind("content")] Message1 message, string id, int id2)
         {
             var thisUserName = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
-            Message thisMessage = _service.getSpecificMessage(thisUserName, id, id2);
+            Message1 thisMessage = _service.getSpecificMessage(thisUserName, id, id2);
             if (thisMessage == null)
             {
                 return NotFound();
@@ -299,7 +303,7 @@ namespace Whatsapp2Server.Controllers
         {
             var thisUserName = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
             Chat chat = _service.getChat(thisUserName, id);
-            Message thisMessage = _service.getSpecificMessage(thisUserName, id, id2);
+            Message1 thisMessage = _service.getSpecificMessage(thisUserName, id, id2);
             if (thisMessage == null)
             {
                 return NotFound();

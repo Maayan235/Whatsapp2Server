@@ -31,7 +31,7 @@ namespace Whatsapp2Server.Models
 */        [DataType(DataType.Password)]
         public string password { get; set; }
         
-        public Message lastMessage { get; set; }
+        public Message1 lastMessage { get; set; }
         public string name { get; set; }
         public string server { get; set; }
         public ICollection<User2> contacts { get; set; }

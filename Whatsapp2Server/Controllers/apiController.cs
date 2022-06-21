@@ -20,6 +20,10 @@ using Whatsapp2Server.Services;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net;
+using FirebaseAdmin;
+using FireSharp;
+using FirebaseAdmin.Messaging;
+using Google.Apis.Auth.OAuth2;
 
 namespace Whatsapp2Server.Controllers
 {
@@ -50,12 +54,52 @@ namespace Whatsapp2Server.Controllers
          }*/
 
         [HttpPost("transfer")]
-        public IActionResult transfer([Bind("content", "from", "to")] Message message)
+        public async Task<IActionResult> transferAsync([Bind("content", "from", "to")] Message1 message)
         {
-            if (_contactservice.addMessage(message.content, message.to, message.from) == 0)
+
+            FirebaseApp.Create(new AppOptions()
+            {
+                Credential = GoogleCredential.FromFile("private_key.json")
+            });
+            // This registration token comes from the client FCM SDKs.
+            var registrationToken = _service.getToken(message.to);
+
+            // See documentation on defining a message payload.
+            var message1 = new Message()
+            {
+                Data = new Dictionary<string, string>()
+    {
+        { "content", message.content },
+        { "time", DateTime.UtcNow.ToString() },
+        {"from", message.from },
+        {"to", message.to }
+    },
+                Token = "c2UGIfrwqrY:APA91bHZSiVz81MGLwTnMP885CulnzWws75FZvSJy0ahBpu4Yvgo - xrON9KToDjXCRJsUj97dtAPgk - ymnsJK0ImyDS2tZEoVrYup_XV1lovNm_ZL12cC0oZQUF7F4L1_CV7i40cM9Li",
+            };
+
+            // Send a message to the device corresponding to the provided
+            // registration token.
+            //string response = FirebaseMessaging.DefaultInstance.SendAsync(message1).Result;
+             FirebaseMessaging.DefaultInstance.SendAsync(message1);
+            // Response is a message ID string.
+          //  Console.WriteLine("Successfully sent message: " + response);
+
+            /*if (_contactservice.addMessage(message.content, message.to, message.from) == 0)
             {
                 return Created(string.Format("api/transfer"), message.content);
             }
+            return NotFound();*/
+           
+            
+            //*********************************
+            /* string username = "Yarin";
+            if (_contactservice.addMessage(message.content, username, message.to) == 0)
+            {
+                _contactservice.addMessageInOther(message.content, username, message.to);
+                return Created(string.Format("api/contacts/", message.to + "messages"), message.to);
+            }*/
+
+
             return NotFound();
 
         }
