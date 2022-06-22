@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="private_key.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="wwwroot - Copy (2)\css\site.css" />
     <None Remove="wwwroot - Copy (2)\js\site - Copy.js" />
     <None Remove="wwwroot - Copy (2)\js\site.js" />
@@ -629,6 +633,12 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.6" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="libman.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

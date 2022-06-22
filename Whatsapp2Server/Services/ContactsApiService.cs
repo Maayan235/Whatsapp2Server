@@ -16,7 +16,7 @@ namespace Whatsapp2Server.Services
         {
             if (contactsList.Count == 0)
             {
-                Message1 m1 = new Message1() { id = -1, fromMe = true, content = "hiiii", from = "Yarin", to = "Maayan", time = DateTime.Now };
+               /* Message1 m1 = new Message1() { id = -1, fromMe = true, content = "hiiii", from = "Yarin", to = "Maayan", time = DateTime.Now };
                 Message1 m2 = new Message1() { id = -2, fromMe = false, content = "hi you", from = "Maayan", to = "Yarin", time = DateTime.Now };
 
                 User2 user = new User2() { id = "Yarin", server = "localhost:5286", name = "Yerin", password = "123456", profilePicSrc = "" };
@@ -25,7 +25,7 @@ namespace Whatsapp2Server.Services
 
                 User2 defUser3 = new User2() { id = "Avital", server = "localhost:5286", name = "vita", message = "hi", lastdate = "nonw lol.." };
 
-                Contacts contact = new Contacts() { id = "Yarin", contacts = new Collection<User2>() { (defUser2),(defUser3) } };
+                Contacts contact = new Contacts() { id = "Yarin", contacts = new Collection<User2>() { (defUser2) } };
 
                 Contacts contact2 = new Contacts() { id = "Maayan", contacts = new Collection<User2>() { (user) } };
                 Contacts contact3 = new Contacts() { id = "Avital", contacts = new Collection<User2>() { user } };
@@ -43,7 +43,7 @@ namespace Whatsapp2Server.Services
                 chat.messages.Add(m1);
                 chat.messages.Add(m2);
                 chats.Add(chat);
-
+*/
 
             }
         }
@@ -153,6 +153,7 @@ namespace Whatsapp2Server.Services
 
         public void addContact(string id, User2 contact)
         {
+
             Contacts myContacts = contactsList.FirstOrDefault(x => x.id == id);
             if (myContacts == null)
             {

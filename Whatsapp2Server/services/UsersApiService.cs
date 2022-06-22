@@ -10,22 +10,25 @@ namespace Whatsapp2Server.Services
         
         public UsersApiService()
         {
-            if (users.Count == 0)
+            /*if (users.Count == 0)
             {
                 User2 user = new User2() {id = "Yarin", server = "localhost:5286", name = "Yerin", password = "123456", profilePicSrc = "" };
-                User2 defUser2 = new User2() { id = "Maayan", server = "localhost:5286", name = "satla", password = "123456", profilePicSrc = "" };
+                User2 defUser2 = new User2() { id = "Maayan", server = "localhost:5286", name = "SaTla", password = "123456", profilePicSrc = "" };
                 User2 defUser3 = new User2() { id = "Avital", server = "localhost:5286", name = "vita", password = "123456", profilePicSrc = "" };
                 users.Add(user);
                 users.Add(defUser2);
                 users.Add(defUser3);
                 Message1 m1 = new Message1() {id = -1, fromMe = true, content = "hiiiiiii", from = "Yarin", time = DateTime.Now };
                 Chat chat = new Chat();
-                chat.contacts.Add( "Yarin");
-                chat.contacts.Add ( "Maayan");
-                chat.messages.Add(m1);
-                user.chats.Add(chat);
+                if (chat.contacts.Count() == 0)
+                {
+                    chat.contacts.Add("Yarin");
+                    chat.contacts.Add("Maayan");
+                    chat.messages.Add(m1);
+                }
+                    user.chats.Add(chat);
                 AddToContacts(user.id, defUser2);
-            }
+            }*/
         }
         
         public string getToken(string id)

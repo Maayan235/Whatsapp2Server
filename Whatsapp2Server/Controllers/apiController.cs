@@ -59,30 +59,34 @@ namespace Whatsapp2Server.Controllers
 
             FirebaseApp.Create(new AppOptions()
             {
-                Credential = GoogleCredential.FromFile("private_key.json")
+                Credential = GoogleCredential.FromFile("pvkey.json")
             });
             // This registration token comes from the client FCM SDKs.
-            var registrationToken = _service.getToken(message.to);
+            var registrationToken = "eD2p5x2MW9A:APA91bHcH5ZSDdNIZtScA-mDFnHXtksWp-RIO9jahHY_Y_nQWF8JQSZe_cv47d-ZvaGT9_Zrtr_AGcTap0TdBcYMA71PsN0yBPj-LZK3gdhI6C6yRpFFIn0Zzq-w9JBP3Axjr8S17_Ju";
+
+            //_service.getToken(message.to);
 
             // See documentation on defining a message payload.
             var message1 = new Message()
             {
                 Data = new Dictionary<string, string>()
-    {
-        { "content", message.content },
-        { "time", DateTime.UtcNow.ToString() },
-        {"from", message.from },
-        {"to", message.to }
-    },
-                Token = "c2UGIfrwqrY:APA91bHZSiVz81MGLwTnMP885CulnzWws75FZvSJy0ahBpu4Yvgo - xrON9KToDjXCRJsUj97dtAPgk - ymnsJK0ImyDS2tZEoVrYup_XV1lovNm_ZL12cC0oZQUF7F4L1_CV7i40cM9Li",
-            };
+                {
+                    { "content", message.content },
+                    { "time", DateTime.UtcNow.ToString() },
+                    { "from", message.from },
+                    { "to", message.to }
+                },
+                Token = registrationToken,
+                Notification = new Notification() {
+                Title = "f",
+                Body = "gg"
+                }
+        };
 
-            // Send a message to the device corresponding to the provided
-            // registration token.
-            //string response = FirebaseMessaging.DefaultInstance.SendAsync(message1).Result;
-             FirebaseMessaging.DefaultInstance.SendAsync(message1);
-            // Response is a message ID string.
-          //  Console.WriteLine("Successfully sent message: " + response);
+
+            string response = await FirebaseMessaging.DefaultInstance.SendAsync(message1);
+           
+           Console.WriteLine("Successfully sent message: " + response);
 
             /*if (_contactservice.addMessage(message.content, message.to, message.from) == 0)
             {
@@ -187,21 +191,32 @@ namespace Whatsapp2Server.Controllers
                 }
                 
             }
+            Contact defContact = new Contact();
+            return defContact;
+        }
+        [HttpGet("registerCheck/{username}")]
+        public Contact getUserInRegisteration(string username)
+        {
+            User2 user = _service.GetUser(username);
+            if (user != null)
+            {
+                    return _service.convertToContact(user);
+            }
             //User2 defUser = new User2() { id = "", name = "0", password = "0", profilePicSrc = "0" };
             return null;
         }
 
 
-      /*  public async Task<IActionResult> getUser(string username)
-        {
-            User2 user = _service.GetUser(username);
-            if (user != null)
-            {
-                return Json(new User2() { id = user.id, password = user.password });
-            }
-            User2 defUser = new User2() { id = "", name = "0", password = "0", profilePicSrc = "0" };
-            return Json(defUser);
-        }*/
+        /*  public async Task<IActionResult> getUser(string username)
+          {
+              User2 user = _service.GetUser(username);
+              if (user != null)
+              {
+                  return Json(new User2() { id = user.id, password = user.password });
+              }
+              User2 defUser = new User2() { id = "", name = "0", password = "0", profilePicSrc = "0" };
+              return Json(defUser);
+          }*/
 
 
 

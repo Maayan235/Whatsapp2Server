@@ -24,15 +24,26 @@ namespace Whatsapp2Server.Controllers
     [Route("api/contacts")]
     public class contatsController : Controller
     {
+
         private readonly ContactsApiService _service;
+        
         private readonly UsersApiService _usersService;
         public IConfiguration _configuration;
         public string loggedId;
 
         public contatsController(IConfiguration configuration)
         {
+
+            for (int i = 0; i < 5000;)
+            {
+                i = i + 1;
+            }
             _service = new ContactsApiService();
-            _usersService = new UsersApiService();
+            for (int i = 0; i < 5000;)
+            {
+                i = i + 1;
+            }
+                _usersService = new UsersApiService();
             _configuration = configuration;
             //GetUserId();
         }
@@ -176,7 +187,7 @@ namespace Whatsapp2Server.Controllers
                  _service.addContact(id, contact);
                  _service.addContactInOther(thisUser, contact.id);
                  return Created(string.Format("api/contacts/", contact.id), contact);
-             }
+             }  
          }*/
 
         public IActionResult AddContact([Bind("id,server,name")] Contact contact)
@@ -184,38 +195,43 @@ namespace Whatsapp2Server.Controllers
 
             //string id = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
             string id = "Yarin";
-            if (contact.server != "localhost:5286")
+            User2 thisUser = _usersService.GetUser(id);
+            if (_service.getContacts(id).FirstOrDefault(x => x.id == contact.id) == null)
             {
-                User2 user2 = new User2();
-                user2.server = contact.server;
-                user2.id = contact.id;
-                user2.name = contact.name;
-                _service.addContact(id, user2);
-                return Created(string.Format("api/contacts/", contact.id), contact);
 
-            }
-            else
-            {
-                User2 user = _usersService.GetUser(contact.id);
-                if (user == null)
-                {
-                    return NotFound();
-                }
                 
-                user.name = contact.name;
-                user.server = contact.server;
-                //user.profilePicSrc = contact.profilePicSrc;
-                User2 thisUser = _usersService.GetUser(id);
-                if(thisUser.contacts.FirstOrDefault(x => x.id == contact.id) != null)
-                {
-                    return BadRequest();
-                }
-                _service.addContact(id, user);
-                _service.addContactInOther(thisUser, contact.id);
-                return Created(string.Format("api/contacts/", contact.id), contact);
+                    if (contact.server != "localhost:5286")
+                    {
 
+                        User2 user2 = new User2();
+                        user2.server = contact.server;
+                        user2.id = contact.id;
+                        user2.name = contact.name;
+                        _service.addContact(id, user2);
+                        return Created(string.Format("api/contacts/", contact.id), contact);
+
+                    }
+                    else
+                    {
+                        User2 user = _usersService.GetUser(contact.id);
+                        if (user == null)
+                        {
+                            return NotFound();
+                        }
+                        //user.profilePicSrc = contact.profilePicSrc;
+
+
+                        user.name = contact.name;
+                        user.server = contact.server;
+                        _service.addContact(id, user);
+                        _service.addContactInOther(thisUser, contact.id);
+                        return Created(string.Format("api/contacts/", contact.id), contact);
+                        int i = 0;
+                    }
+                }
+                return NotFound();
             }
-        }
+        
             /* [HttpDelete("contacts3/{id}")]
              public IActionResult deleteContact(string id)
              {
