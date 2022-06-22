@@ -33,7 +33,8 @@ namespace Whatsapp2Server.Services
         
         public string getToken(string id)
         {
-            return users.FirstOrDefault(x => x.id == id).token;
+            //return users.FirstOrDefault(x => x.id == id).token;
+            return "g";
         }
         public Chat getChat(string username, string contactName)
         {
@@ -52,8 +53,8 @@ namespace Whatsapp2Server.Services
         }
         public void setToken (Token token)
         {
-            User2 user = users.FirstOrDefault(x => x.id == token.id);
-            user.token = token.token;
+            //User2 user = users.FirstOrDefault(x => x.id == token.id);
+            //user.token = token.token;
         }
         public void deleteContact(User2 thisUser, string contactId)
         {

@@ -57,14 +57,15 @@ namespace Whatsapp2Server.Controllers
         public async Task<IActionResult> transferAsync([Bind("content", "from", "to")] Message1 message)
         {
 
-            FirebaseApp.Create(new AppOptions()
+           /* FirebaseApp.Create(new AppOptions()
             {
                 Credential = GoogleCredential.FromFile("pvkey.json")
             });
             // This registration token comes from the client FCM SDKs.
-            var registrationToken = "eD2p5x2MW9A:APA91bHcH5ZSDdNIZtScA-mDFnHXtksWp-RIO9jahHY_Y_nQWF8JQSZe_cv47d-ZvaGT9_Zrtr_AGcTap0TdBcYMA71PsN0yBPj-LZK3gdhI6C6yRpFFIn0Zzq-w9JBP3Axjr8S17_Ju";
+            var registrationToken = _service.getToken(message.to);
+            //"eD2p5x2MW9A:APA91bHcH5ZSDdNIZtScA-mDFnHXtksWp-RIO9jahHY_Y_nQWF8JQSZe_cv47d-ZvaGT9_Zrtr_AGcTap0TdBcYMA71PsN0yBPj-LZK3gdhI6C6yRpFFIn0Zzq-w9JBP3Axjr8S17_Ju";
 
-            //_service.getToken(message.to);
+
 
             // See documentation on defining a message payload.
             var message1 = new Message()
@@ -88,7 +89,7 @@ namespace Whatsapp2Server.Controllers
            
            Console.WriteLine("Successfully sent message: " + response);
 
-            /*if (_contactservice.addMessage(message.content, message.to, message.from) == 0)
+            *//*if (_contactservice.addMessage(message.content, message.to, message.from) == 0)
             {
                 return Created(string.Format("api/transfer"), message.content);
             }
@@ -96,12 +97,12 @@ namespace Whatsapp2Server.Controllers
            
             
             //*********************************
-            /* string username = "Yarin";
+             string username = "Yarin";
             if (_contactservice.addMessage(message.content, username, message.to) == 0)
             {
                 _contactservice.addMessageInOther(message.content, username, message.to);
                 return Created(string.Format("api/contacts/", message.to + "messages"), message.to);
-            }*/
+            }
 
 
             return NotFound();
