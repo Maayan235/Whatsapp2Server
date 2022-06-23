@@ -67,47 +67,47 @@ namespace Whatsapp2Server.Controllers
         public async Task<IActionResult> transferAsync([Bind("content", "from", "to")] Message1 message)
         {
 
-           /* FirebaseApp.Create(new AppOptions()
-            {
-                Credential = GoogleCredential.FromFile("pvkey.json")
-            });
-            // This registration token comes from the client FCM SDKs.
-            var registrationToken = _service.getToken(message.to);
-            //"eD2p5x2MW9A:APA91bHcH5ZSDdNIZtScA-mDFnHXtksWp-RIO9jahHY_Y_nQWF8JQSZe_cv47d-ZvaGT9_Zrtr_AGcTap0TdBcYMA71PsN0yBPj-LZK3gdhI6C6yRpFFIn0Zzq-w9JBP3Axjr8S17_Ju";
+            /* FirebaseApp.Create(new AppOptions()
+             {
+                 Credential = GoogleCredential.FromFile("pvkey.json")
+             });
+             // This registration token comes from the client FCM SDKs.
+             var registrationToken = _service.getToken(message.to);
+             //"eD2p5x2MW9A:APA91bHcH5ZSDdNIZtScA-mDFnHXtksWp-RIO9jahHY_Y_nQWF8JQSZe_cv47d-ZvaGT9_Zrtr_AGcTap0TdBcYMA71PsN0yBPj-LZK3gdhI6C6yRpFFIn0Zzq-w9JBP3Axjr8S17_Ju";
 
 
 
-            // See documentation on defining a message payload.
-            var message1 = new Message()
-            {
-                Data = new Dictionary<string, string>()
-                {
-                    { "content", message.content },
-                    { "time", DateTime.UtcNow.ToString() },
-                    { "from", message.from },
-                    { "to", message.to }
-                },
-                Token = registrationToken,
-                Notification = new Notification() {
-                Title = "f",
-                Body = "gg"
-                }
-        };
+             // See documentation on defining a message payload.
+             var message1 = new Message()
+             {
+                 Data = new Dictionary<string, string>()
+                 {
+                     { "content", message.content },
+                     { "time", DateTime.UtcNow.ToString() },
+                     { "from", message.from },
+                     { "to", message.to }
+                 },
+                 Token = registrationToken,
+                 Notification = new Notification() {
+                 Title = "f",
+                 Body = "gg"
+                 }
+         };
 
 
-            string response = await FirebaseMessaging.DefaultInstance.SendAsync(message1);
-           
-           Console.WriteLine("Successfully sent message: " + response);
+             string response = await FirebaseMessaging.DefaultInstance.SendAsync(message1);
 
-            *//*if (_contactservice.addMessage(message.content, message.to, message.from) == 0)
-            {
-                return Created(string.Format("api/transfer"), message.content);
-            }
-            return NotFound();*/
-           
-            
+            Console.WriteLine("Successfully sent message: " + response);
+
+             *//*if (_contactservice.addMessage(message.content, message.to, message.from) == 0)
+             {
+                 return Created(string.Format("api/transfer"), message.content);
+             }
+             return NotFound();*/
+
+
             //*********************************
-             string username = "Yarin";
+            string username = message.from;
             if (_contactservice.addMessage(message.content, username, message.to) == 0)
             {
                 _contactservice.addMessageInOther(message.content, username, message.to);
@@ -206,7 +206,8 @@ namespace Whatsapp2Server.Controllers
                 }
 
             }
-            return null;
+            Contact defContact = new Contact();
+            return defContact;
         }
 
         // GET: Users
