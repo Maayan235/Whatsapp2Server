@@ -17,6 +17,7 @@ using Whatsapp2Server.Data;
 using Whatsapp2Server.Models;
 using Whatsapp2Server.Services;
 
+
 namespace Whatsapp2Server.Controllers
 {
     //[Authorize(AuthenticationSchemes = "Bearer")]
@@ -27,7 +28,7 @@ namespace Whatsapp2Server.Controllers
         private readonly ContactsApiService _service;
         private readonly UsersApiService _usersService;
         public IConfiguration _configuration;
-        public string loggedId;
+        public string _userId;
 
         public contatsController(IConfiguration configuration)
         {
@@ -37,15 +38,13 @@ namespace Whatsapp2Server.Controllers
             //GetUserId();
         }
 
-
-
         private async void GetUserId()
         {
-            var token = await HttpContext.GetTokenAsync("access_token");
+/*            var token = await HttpContext.GetTokenAsync("access_token");
             var handler = new JwtSecurityTokenHandler();
-            var jwt = handler.ReadJwtToken(token);
-            loggedId = jwt.Claims.First(x => x.Type == "UserId").Value;
-
+            var jwtSecurityToken = handler.ReadJwtToken(token);
+            _userId = User.Claims.FirstOrDefault(x => x.Type.Equals("UserId", StringComparison.InvariantCultureIgnoreCase)).ToString();*/
+            _userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type.EndsWith("UserID"))?.Value;
         }
        
         // public async Task<IActionResult> Create([Bind("UserName, Password, NickName")] User user)
@@ -54,11 +53,14 @@ namespace Whatsapp2Server.Controllers
         [HttpGet]
         public IEnumerable<Contact> sendContacts()
         {
-            //string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+            //string token = Request.Headers["Authorization"];
+            //string username1 = HttpContext.Session.GetString("userId");
+            //string username = HttpContext.User.Identity.Name;
 
             //string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
-            string username = "Yarin";
-
+            //string username = "Yarin";
+            //GetUserId();
+            string username = HttpContext.User.Claims.FirstOrDefault(c => c.Type.EndsWith("UserID"))?.Value;
             ICollection<User2> myContacts =  _service.getContacts(username);
             if(myContacts == null)
             {
@@ -90,9 +92,10 @@ namespace Whatsapp2Server.Controllers
     [HttpGet("{id}/messages")]
         public ICollection<MessageRet> getmessages(string id)
         {
-
+            string username = HttpContext.Session.GetString("userId");
             //string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
-            string username = "Yarin";
+            /*            GetUserId();
+                        string username = _userId;*/
             Chat chat = _service.getChat(username, id);
             if (chat == null)
             {
@@ -108,8 +111,8 @@ namespace Whatsapp2Server.Controllers
         [HttpGet("chat/{id}")]
         public IActionResult getchat(string id)
         {
-
-            string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+            string username = HttpContext.Session.GetString("userId");
+            //string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
             Chat chat = _service.getChat(username, id);
             if (chat == null)
             {
@@ -125,8 +128,9 @@ namespace Whatsapp2Server.Controllers
         [HttpPost("{id}/messages")]
         public IActionResult postMessages([Bind("content")] Message1 message, string id) 
         {
-            //string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
-            string username = "Yarin";
+            string username = HttpContext.User.Claims.FirstOrDefault(c => c.Type.EndsWith("UserID"))?.Value;;
+            //string username = HttpContext.Session.GetString("userId");
+            //string username = "Yarin";
             if (_service.addMessage(message.content, username, id) == 0)
             {
                 _service.addMessageInOther(message.content, username, id);
@@ -141,7 +145,8 @@ namespace Whatsapp2Server.Controllers
         [HttpGet("{id}/lastMessage")]
         public IActionResult lastMessage(string id)
         {
-            string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
+            string username = HttpContext.Session.GetString("userId");
+            //string username = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
             User2 myContact = _service.getContacts(username).FirstOrDefault(x => x.id == id);
             return Json(myContact.lastMessage);
         }
@@ -182,8 +187,9 @@ namespace Whatsapp2Server.Controllers
         public IActionResult AddContact([Bind("id,server,name")] Contact contact)
         {
 
-            //string id = HttpContext.User.FindFirst(ClaimTypes.Name).Value;
-            string id = "Yarin";
+            string id = HttpContext.User.Claims.FirstOrDefault(c => c.Type.EndsWith("UserID"))?.Value;;
+            //string id = HttpContext.Session.GetString("userId");
+            //string id = "Yarin";
             if (contact.server != "localhost:5286")
             {
                 User2 user2 = new User2();

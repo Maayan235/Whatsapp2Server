@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using Whatsapp2Server.Hubs;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
@@ -27,9 +30,10 @@ namespace Whatsapp2Server
             builder.Services.AddControllersWithViews();
             builder.Services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(1);
+                options.IdleTimeout = TimeSpan.FromMinutes(10);
             });
             builder.Services.AddSignalR();
+            builder.Services.AddSingleton<ChatHub>();
             builder.Services.AddCors(options =>
             {
                 options.AddDefaultPolicy(builder =>
@@ -41,18 +45,35 @@ namespace Whatsapp2Server
                 });
             });
 
-
-
-
-            builder.Services.AddAuthentication(options =>
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            })
-            .AddCookie(options =>
-            {
-                options.LoginPath = "/Users/Login/";
-                options.AccessDeniedPath = "/Users/AccessDenied/";
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidAudience = builder.Configuration["JWTParams:Audience"],
+                    ValidIssuer = builder.Configuration["JWTParams:Issuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTParams:SecretKey"]))
+                };
             });
+
+
+
+            /*            builder.Services.AddAuthentication(options =>
+                        {
+                            options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                        })
+                        .AddCookie(options =>
+                        {
+            *//*                options.Cookie.HttpOnly = true;
+                            //options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                            options.Cookie.SameSite = SameSiteMode.Lax;
+                            options.Cookie.Name = CookieAuthenticationDefaults.AuthenticationScheme;*//*
+                            options.LoginPath = "/Users/Login/";
+                            options.AccessDeniedPath = "/Users/AccessDenied/";
+                        });*/
 
             builder.Services.AddSignalR();
             builder.Services.AddRazorPages();
@@ -63,25 +84,30 @@ namespace Whatsapp2Server
 
         public static void Configure(WebApplication app)
         {
-            app.UseRouting();
-            app.UseCors();
-
-            app.UseStaticFiles();
-            app.UseSession();
-            app.UseAuthentication();
-            app.UseEndpoints(endpoints =>
-            {
-/*                endpoints.MapRazorPages();
-*/                endpoints.MapHub<ChatHub>("/chat");
-            });
 
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            app.UseRouting();
+            app.UseSession();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.MapControllerRoute(
+                 name: "default",
+                 pattern: "{controller=Home}/{action=Index}/{id?}");
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapRazorPages();
+                endpoints.MapHub<ChatHub>("/chat");
+            });
 
-          
-            
+
+
+
+
             /*app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -91,17 +117,16 @@ namespace Whatsapp2Server
                     )
             }*/
 
-            app.UseAuthorization();
-            app.MapControllerRoute(
-                 name: "default",
-                 pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            app.UseCors();
+
             app.MapRazorPages();
 
 
 
         }
-        
-        
+
+
     }
 }
 

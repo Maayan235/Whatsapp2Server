@@ -13,6 +13,7 @@ namespace Whatsapp2Server.Models
             this.last = "";
             this.lastdate = "";
             this.profilePicSrc = "";
+            this.jwtToken = "";
         }
 
         public string id { get; set; }
@@ -29,7 +30,7 @@ namespace Whatsapp2Server.Models
 
         public string profilePicSrc { get; set; }
 
-
+        public string jwtToken { get; set; }
     }
 }
 

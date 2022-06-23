@@ -20,6 +20,7 @@ namespace Whatsapp2Server.Models
             message = "";
             lastMessage = null;
             token = "";
+            jwtToken = "";
         }
 
         //[Required]
@@ -42,6 +43,6 @@ namespace Whatsapp2Server.Models
         public ICollection<Chat> chats { get; set; }
         public string profilePicSrc { get; set; }
 
-
+        public string jwtToken { get; set; }
     }
 }

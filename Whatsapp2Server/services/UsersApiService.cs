@@ -22,7 +22,7 @@ namespace Whatsapp2Server.Services
                 Chat chat = new Chat();
                 chat.contacts.Add( "Yarin");
                 chat.contacts.Add ( "Maayan");
-                chat.messages.Add(m1);
+                //chat.messages.Add(m1);
                 user.chats.Add(chat);
                 AddToContacts(user.id, defUser2);
             }
@@ -108,6 +108,17 @@ namespace Whatsapp2Server.Services
             contact.id = user.id;
             contact.server = user.server;
             contact.name = user.name;
+            //contact.prifilePicSrc = user.profilePicSrc;
+            return contact;
+        }
+
+        public Contact convertToContactWithToken(User2 user)
+        {
+            Contact contact = new Contact();
+            contact.id = user.id;
+            contact.server = user.server;
+            contact.name = user.name;
+            contact.jwtToken = user.jwtToken;
             //contact.prifilePicSrc = user.profilePicSrc;
             return contact;
         }

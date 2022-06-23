@@ -37,6 +37,7 @@ namespace Whatsapp2Server.Controllers
         private static readonly HttpClient client = new HttpClient();
         private readonly UsersApiService _service;
         public IConfiguration _configuration;
+        public string _userId;
 
         public apiController(IConfiguration configuration)
         {
@@ -45,6 +46,15 @@ namespace Whatsapp2Server.Controllers
 
             _configuration = configuration;
         }
+
+/*        private async void GetUserId()
+        {
+            var token = await HttpContext.GetTokenAsync("access_token");
+            var handler = new JwtSecurityTokenHandler();
+            var jwtSecurityToken = handler.ReadJwtToken(token);
+            _userId = User.Claims.FirstOrDefault(x => x.Type.Equals("UserId", StringComparison.InvariantCultureIgnoreCase)).ToString();
+        }*/
+
         /* [HttpPut("contacts/{id}")]
          public IActionResult updateContact([Bind("name, server")]User2 contact, string id)
          {
@@ -141,7 +151,8 @@ namespace Whatsapp2Server.Controllers
             {
                 User2 loggedIn = _service.GetUser(user.id);
                 //     Post(user.UserName);
-                Signin(loggedIn);
+                HttpContext.Session.SetString("userId", loggedIn.id);
+                //Signin(loggedIn);
                 //_service.Update(user);
 
                 return Created(string.Format("api/logIn", loggedIn.id), loggedIn.id);
@@ -149,27 +160,48 @@ namespace Whatsapp2Server.Controllers
             return NotFound();
         }
 
-        [HttpPut("signIn/{username}")]
-        public IActionResult Post(string username)
+        [HttpPut("signIn/{username}/{password}")]
+        //public IActionResult Post(string username)
+        public Contact Post(string username, string password)
         {
-            var claims = new[]
+            User2 loggedIn = _service.GetUser(username);
+            
+            if (loggedIn != null)
             {
+                if (loggedIn.password == password)
+                {
+                    HttpContext.Session.SetString("userId", loggedIn.id);
+                    //Signin(user);
+                    //return _service.convertToContact(loggedIn);
+                    var claims = new[]
+{
                 new Claim(JwtRegisteredClaimNames.Sub, _configuration["JWTParams:Subject"]),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Sub, DateTime.UtcNow.ToString()),
                 new Claim("UserID", username)
             };
 
-            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWTParams:SecretKey"]));
-            var mac = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-            var token = new JwtSecurityToken(
-                _configuration["JWTParams:Issuer"],
-                _configuration["JWTParams:Audience"],
-                claims,
-                expires: DateTime.UtcNow.AddMinutes(10),
-                signingCredentials: mac);
+                    var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWTParams:SecretKey"]));
+                    var mac = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+                    var token = new JwtSecurityToken(
+                        _configuration["JWTParams:Issuer"],
+                        _configuration["JWTParams:Audience"],
+                        claims,
+                        expires: DateTime.UtcNow.AddMinutes(10),
+                        signingCredentials: mac);
 
-            return Ok(new JwtSecurityTokenHandler().WriteToken(token));
+                    var jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
+                    if (loggedIn != null)
+                    {
+                        loggedIn.jwtToken = jwtToken;
+                    }
+
+                    return _service.convertToContactWithToken(loggedIn);
+                    //return Ok(jwtToken);
+                }
+
+            }
+            return null;
         }
 
         // GET: Users
@@ -182,6 +214,7 @@ namespace Whatsapp2Server.Controllers
             {
                 if(user.password == password)
                 {
+                    HttpContext.Session.SetString("userId", user.id);
                     //Signin(user);
                     return _service.convertToContact(user);
                 }
@@ -224,10 +257,6 @@ namespace Whatsapp2Server.Controllers
         {
             _service.setToken(token);
         }
-
-
-
-
 
 
         [HttpPost("register")]
@@ -377,13 +406,20 @@ namespace Whatsapp2Server.Controllers
         */
         private async void Signin(User2 account)
         {
-            var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, account.id),
-                };
+            string i = HttpContext.User.Identity.Name;
 
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            /*            var claims = new List<Claim>
+                            {
+                                new Claim(ClaimTypes.NameIdentifier, account.id),
+                                new Claim(ClaimTypes.Name, account.id),
+                            };
 
+                        var claimsIdentity = new ClaimsIdentity(claims,CookieAuthenticationDefaults.AuthenticationScheme);*/
+
+            var claimsIdentity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
+            claimsIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, "User Id"));
+            claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, "User Name"));
+            var principal = new ClaimsPrincipal(claimsIdentity);
             var authProperties = new AuthenticationProperties
             {
                 //ExpireUtc = DataTimeOffset.UtcNow.AddMinutes(10)
@@ -391,9 +427,9 @@ namespace Whatsapp2Server.Controllers
 
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity),
-                authProperties);
+                principal);
 
+            var claiums = HttpContext.User.Claims;
         }
 
     }
